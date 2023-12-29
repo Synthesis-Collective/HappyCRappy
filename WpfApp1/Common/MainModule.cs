@@ -12,7 +12,9 @@ internal class MainModule : Autofac.Module
     protected override void Load(ContainerBuilder builder)
     {
         builder.RegisterType<VM_MainWindow>().AsSelf().SingleInstance();
-        builder.RegisterType<VM_SettingsMenu>().AsSelf().SingleInstance();
+        builder.RegisterType<SettingsProvider>().AsSelf().SingleInstance();
+        builder.RegisterType<VM_IO>().AsSelf().SingleInstance();
         builder.RegisterType<StandaloneEnvironmentStateProvider>().AsImplementedInterfaces().AsSelf().SingleInstance();
+        builder.RegisterType<VM_SettingsMenu>().AsSelf().SingleInstance();
     }
 }

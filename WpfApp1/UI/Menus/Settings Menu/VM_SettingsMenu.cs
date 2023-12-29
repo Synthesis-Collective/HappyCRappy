@@ -13,10 +13,10 @@ namespace HappyCRappy;
 
 public class VM_SettingsMenu : VM
 {
-    public VM_SettingsMenu(StandaloneEnvironmentStateProvider environmentStateProvider)
+    public VM_SettingsMenu(IEnvironmentStateProvider environmentStateProvider)
     {
         EnvironmentStateProvider = environmentStateProvider;
     }
 
-    public StandaloneEnvironmentStateProvider EnvironmentStateProvider { get; }
+    public IEnvironmentStateProvider EnvironmentStateProvider { get; }
 }

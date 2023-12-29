@@ -10,6 +10,6 @@ namespace HappyCRappy;
 
 public class HappyCrappySettings
 {
-    public string DataFolderPathStr { get; set; } = string.Empty;
-    public SkyrimRelease SkyrimGameType { get; set; } = SkyrimRelease.SkyrimSE;
+    public string DataFolderPath { get; set; } = string.Empty;
+    public SkyrimRelease GameType { get; set; } = SkyrimRelease.SkyrimSE;
 }

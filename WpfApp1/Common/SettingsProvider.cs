@@ -10,11 +10,12 @@ namespace HappyCRappy;
 
 public class SettingsProvider
 {
-    public SettingsProvider()
+    private IEnvironmentStateProvider _environmentStateProvider;
+    public SettingsProvider(IEnvironmentStateProvider environmentStateProvider)
     {
+        _environmentStateProvider = environmentStateProvider;
         Settings = new();
         SettingsPath = Path.Combine(GetExePath(), "Settings", "Settings.json");
-
     }
     public HappyCrappySettings Settings { get; set; }
     public string SettingsPath { get; set; }
@@ -41,11 +42,21 @@ public class SettingsProvider
         }
     }
 
-    private void LoadSettings()
+    public void LoadSettings()
     {
         if (File.Exists(SettingsPath))
         {
-
+            var settings = JSONhandler<HappyCrappySettings>.LoadJSONFile(SettingsPath, out bool success, out string _);
+            if (success && settings != null)
+            {
+                Settings = settings;
+            }
         }
+    }
+
+    public void SaveSettings()
+    {
+        IOFunctions.CreateDirectoryIfNeeded(SettingsPath, IOFunctions.PathType.File);
+        JSONhandler<HappyCrappySettings>.SaveJSONFile(Settings, SettingsPath, out _, out _);
     }
 }
