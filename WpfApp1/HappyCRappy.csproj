@@ -15,11 +15,11 @@
     <PackageReference Include="Mutagen.Bethesda.Synthesis" Version="0.26.0" />
     <PackageReference Include="Mutagen.Bethesda.Synthesis.WPF" Version="0.26.0" />
     <PackageReference Include="Mutagen.Bethesda.WPF" Version="0.42.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Back End\" />
-    <Folder Include="DTOs\" />
   </ItemGroup>
 
 </Project>
