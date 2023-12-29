@@ -16,5 +16,6 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<VM_IO>().AsSelf().SingleInstance();
         builder.RegisterType<StandaloneEnvironmentStateProvider>().AsImplementedInterfaces().AsSelf().SingleInstance();
         builder.RegisterType<VM_SettingsMenu>().AsSelf().SingleInstance();
+        builder.RegisterType<VM_SnapshotMenu>().AsSelf().SingleInstance();
     }
 }

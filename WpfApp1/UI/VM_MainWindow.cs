@@ -12,14 +12,15 @@ namespace HappyCRappy;
 public class VM_MainWindow : VM
 {
     private readonly VM_IO _vmIO;
-    public VM_MainWindow(VM_SettingsMenu settingsVM, VM_IO vmIO)
+    public VM_MainWindow(VM_SettingsMenu settingsVM, VM_IO vmIO, VM_SnapshotMenu snapShotVM)
     {
         _vmIO = vmIO;
         _vmIO.CopyInViewModels();
 
         _settingsVM = settingsVM;
+        _snapShotVM = snapShotVM;
 
-        DisplayedVM = _settingsVM;
+        DisplayedVM = snapShotVM;
 
         ShowSettingsMenu = new RelayCommand(
             canExecute: _ => true,
@@ -29,12 +30,22 @@ public class VM_MainWindow : VM
             }
         );
 
+        ShowSnapShotMenu = new RelayCommand(
+            canExecute: _ => true,
+            execute: _ =>
+            {
+                DisplayedVM = _snapShotVM;
+            }
+        );
+
         Application.Current.Exit += OnApplicationExit;
     }
     public RelayCommand ShowSettingsMenu { get; }
+    public RelayCommand ShowSnapShotMenu { get; }
     public object DisplayedVM { get; set; }
 
     private readonly VM_SettingsMenu _settingsVM;
+    private readonly VM_SnapshotMenu _snapShotVM;
 
     private void OnApplicationExit(object sender, ExitEventArgs e)
     {
