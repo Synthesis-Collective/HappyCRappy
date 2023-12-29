@@ -1,3 +1,4 @@
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ public class VM_MainWindow : VM
         );
     }
     public RelayCommand ShowSettingsMenu { get; }
-    public VM DisplayedVM { get; set; }
+    public object DisplayedVM { get; set; }
 
     private readonly VM_SettingsMenu _settingsVM;
 }

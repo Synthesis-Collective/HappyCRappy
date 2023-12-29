@@ -18,8 +18,8 @@ public interface IEnvironmentStateProvider
     DirectoryPath ExtraSettingsDataPath { get; }
     DirectoryPath InternalDataPath { get; }
     DirectoryPath DataFolderPath { get; set; }
-    public GameRelease GameType { get; }
-    // Additional properties (for logging only)
+    public SkyrimRelease GameType { get; }
     public string? CreationClubListingsFilePath { get; }
     public string? LoadOrderFilePath { get; }
+    public bool EnvironmentCreated { get; set; }
 }

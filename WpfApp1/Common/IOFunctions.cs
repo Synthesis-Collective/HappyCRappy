@@ -102,4 +102,57 @@ public class IOFunctions
         }
         return true;
     }
+
+    public static bool SelectFolder(string initDir, out string path)
+    {
+        System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+        path = "";
+
+        if (initDir != "")
+        {
+            dialog.InitialDirectory = initDir;
+        }
+
+        if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            path = dialog.SelectedPath;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static bool SelectFile(string initDir, string filter, string title, out string path, string startingFileName = "")
+    {
+        path = "";
+
+        System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog();
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            dialog.Filter = filter;
+        }
+
+        if (initDir != "")
+        {
+            dialog.InitialDirectory = initDir;
+        }
+        if (startingFileName != "")
+        {
+            dialog.FileName = startingFileName;
+        }
+
+        dialog.Title = title;
+
+        if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            path = dialog.FileName;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

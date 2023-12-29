@@ -9,10 +9,10 @@ namespace HappyCRappy;
 
 public class RelayCommand : ICommand
 {
-    private readonly Predicate<object> _canExecute;
-    private readonly Action<object> _execute;
+    private readonly Predicate<object?> _canExecute;
+    private readonly Action<object?> _execute;
 
-    public RelayCommand(Predicate<object> canExecute, Action<object> execute)
+    public RelayCommand(Predicate<object?> canExecute, Action<object?> execute)
     {
         _canExecute = canExecute;
         _execute = execute;
@@ -26,13 +26,11 @@ public class RelayCommand : ICommand
 
     public bool CanExecute(object? parameter)
     {
-        if(parameter == null) throw new ArgumentNullException(nameof(parameter));
         return _canExecute(parameter);
     }
 
     public void Execute(object? parameter)
     {
-        if (parameter == null) throw new ArgumentNullException(nameof(parameter));
         _execute(parameter);
     }
 }

@@ -28,7 +28,7 @@ public partial class App : Application
         SynthesisPipeline.Instance
             //.SetOpenForSettings(OpenForSettings)
             //.AddRunnabilityCheck(CanRunPatch)
-            //.AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
+            //.AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)sz
             .SetTypicalOpen(StandaloneOpen)
             .SetForWpf()
             .Run(e.Args)
