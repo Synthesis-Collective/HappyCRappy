@@ -11,6 +11,7 @@ using Mutagen.Bethesda.Serialization.Yaml;
 using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Serialization.Streams;
+using Mutagen.Bethesda.Plugins.Cache;
 
 namespace HappyCRappy;
 
@@ -21,13 +22,11 @@ public class Serializer
 
     }
 
-    public string SerializeRecord<T>(T record, SerializationType type)
-        where T: IMajorRecordGetter
+    public string SerializeRecord(IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> recordContext, SerializationType type)
     {
         string output = string.Empty;
         var tempMod = new SkyrimMod(new("temp.esp", Mutagen.Bethesda.Plugins.ModType.Plugin), SkyrimRelease.SkyrimSE);
-        var group = (IGroup<IMajorRecord>)GetPatchRecordGroup(record, tempMod);
-        group.Add(record);
+        recordContext.GetOrAddAsOverride(tempMod);
         switch(type)
         {
             case SerializationType.JSON: output = SerializeJSON(tempMod); break;

@@ -64,7 +64,7 @@ public class SnapShotter
                     var contextSnapShot = new FormContextSnapshot();
                     contextSnapShot.SourceModKey = context.ModKey;
                     contextSnapShot.SerializationType = serialization;
-                    contextSnapShot.SerializationString = _serializer.SerializeRecord(context.Record, serialization); // serialize here
+                    contextSnapShot.SerializationString = _serializer.SerializeRecord(context, serialization); // serialize here
                     formSnapShot.ContextSnapshots.Add(contextSnapShot);
                 }
             }
