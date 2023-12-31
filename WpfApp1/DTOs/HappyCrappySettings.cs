@@ -14,4 +14,5 @@ public class HappyCrappySettings
     public string DataFolderPath { get; set; } = string.Empty;
     public SkyrimRelease GameType { get; set; } = SkyrimRelease.SkyrimSE;
     public List<ModKey> TrackedModKeys { get; set; } = new();
+    public string SnapshotPath { get; set; } = string.Empty;
 }

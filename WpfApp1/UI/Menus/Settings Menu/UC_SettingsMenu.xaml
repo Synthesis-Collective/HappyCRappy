@@ -18,13 +18,20 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Border BorderBrush="{Binding EnvironmentStateProvider.EnvironmentColor}" BorderThickness="1" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <local:UC_StandaloneEnvironmentStateProvider DataContext="{Binding EnvironmentStateProvider}"/>
         </Border>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Conflict Resolution Patches"/>
-        <plugins:ModKeyMultiPicker Grid.Row="1" Grid.Column="2" ModKeys="{Binding TrackedModKeys}" SearchableMods="{Binding EnvironmentStateProvider.LoadOrder}" />
+        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" ToolTip="Directory where your snapshots will be saved to">Snapshot Directory</TextBlock>
+        <StackPanel Grid.Row="1" Grid.Column="2"  Orientation="Horizontal">
+            <Button VerticalAlignment="Center" Command="{Binding SetSnapshotPath}" Foreground="LightGreen">Select</Button>
+            <TextBlock Background="Black" HorizontalAlignment="Left" Text="{Binding Path=SnapshotPath, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 5 0"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Conflict Resolution Patches"/>
+        <plugins:ModKeyMultiPicker Grid.Row="2" Grid.Column="2" ModKeys="{Binding TrackedModKeys}" SearchableMods="{Binding EnvironmentStateProvider.LoadOrder}" />
     </Grid>
 </UserControl>

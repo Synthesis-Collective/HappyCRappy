@@ -15,17 +15,41 @@ namespace HappyCRappy;
 
 public class VM_SettingsMenu : VM
 {
-    public VM_SettingsMenu(IEnvironmentStateProvider environmentStateProvider)
+    public VM_SettingsMenu(IEnvironmentStateProvider environmentStateProvider, SettingsProvider settingsProvider)
     {
         EnvironmentStateProvider = environmentStateProvider;
+        _settingsProvider = settingsProvider;
+
+        SnapshotPath = Path.Combine(settingsProvider.GetExePath(), "Snapshots");
+
+        SetSnapshotPath = new RelayCommand(
+            canExecute: _ => true,
+            execute: _ =>
+            {
+                if (IOFunctions.SelectFolder("", out string selectedPath))
+                {
+                    SnapshotPath = selectedPath;
+                }
+            }
+        );
     }
 
     public IEnvironmentStateProvider EnvironmentStateProvider { get; }
+    private readonly SettingsProvider _settingsProvider;
     public ObservableCollection<ModKey> TrackedModKeys { get; set; } = new();
-
+    public string SnapshotPath { get; set; } = string.Empty;
+    public RelayCommand SetSnapshotPath { get; }
     public void ReadFromModel(HappyCrappySettings model)
     {
         TrackedModKeys = new(model.TrackedModKeys);
+        if (!model.SnapshotPath.IsNullOrWhitespace() && Directory.Exists(model.SnapshotPath))
+        {
+            SnapshotPath = model.SnapshotPath;
+        }
+        else
+        {
+            SnapshotPath = Path.Combine(_settingsProvider.GetExePath(), "Snapshots");
+        }
 
         if (EnvironmentStateProvider is StandaloneEnvironmentStateProvider standaloneEnvironment)
         {
@@ -40,7 +64,8 @@ public class VM_SettingsMenu : VM
         {
             GameType = EnvironmentStateProvider.GameType,
             DataFolderPath = EnvironmentStateProvider.DataFolderPath,
-            TrackedModKeys = TrackedModKeys.ToList()
+            TrackedModKeys = TrackedModKeys.ToList(),
+            SnapshotPath = SnapshotPath
         };
         return model;
     }

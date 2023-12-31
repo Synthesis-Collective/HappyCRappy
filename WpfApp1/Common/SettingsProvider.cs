@@ -20,7 +20,7 @@ public class SettingsProvider
     public HappyCrappySettings Settings { get; set; }
     public string SettingsPath { get; set; }
 
-    private string GetExePath()
+    public string GetExePath()
     {
         string? exeLocation = null;
         var assembly = Assembly.GetEntryAssembly();
