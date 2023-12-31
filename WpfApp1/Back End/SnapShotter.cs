@@ -31,6 +31,15 @@ public class SnapShotter
         List<FormSnapshot> snapShots = new();
 
         SerializationType serialization = SerializationType.JSON; // temporary until added to settings
+        string extension = "";
+        switch(serialization)
+        {
+            case SerializationType.JSON: extension = ".json"; break;
+            case SerializationType.YAML: extension = ".yaml"; break;
+        }
+
+        string dirPath = Path.Combine(_settingsProvider.Settings.SnapshotPath, $"{DateTime.Now:yyyy-MM-dd-HH-mm-ss}");
+        IOFunctions.CreateDirectoryIfNeeded(dirPath, IOFunctions.PathType.Directory);
 
         foreach (var targetModKey in _settingsProvider.Settings.TrackedModKeys)
         {
@@ -67,7 +76,10 @@ public class SnapShotter
                     contextSnapShot.SerializationString = _serializer.SerializeRecord(context, serialization); // serialize here
                     formSnapShot.ContextSnapshots.Add(contextSnapShot);
                 }
+                snapShots.Add(formSnapShot);
             }
-        }
+            string filePath = Path.Combine(dirPath, targetModKey.Name + extension);
+            JSONhandler<List<FormSnapshot>>.SaveJSONFile(snapShots, filePath, out _, out _);
+        }        
     }
 }
