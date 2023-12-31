@@ -22,7 +22,7 @@ public static class ModSerialization
         using (MemoryStream stream = new MemoryStream())
         {
             // Perform operations on the stream
-            Task.Run(() => MutagenYamlConverter.Instance.Serialize(mod, stream));
+            MutagenYamlConverter.Instance.Serialize(mod, stream).Wait();
 
             // Convert the stream to a string
             result = Encoding.UTF8.GetString(stream.ToArray());
@@ -38,7 +38,7 @@ public static class ModSerialization
         using (MemoryStream stream = new MemoryStream())
         {
             // Perform operations on the stream
-            Task.Run(() => MutagenJsonConverter.Instance.Serialize(mod, stream));
+            MutagenJsonConverter.Instance.Serialize(mod, stream).Wait();
 
             // Convert the stream to a string
             result = Encoding.UTF8.GetString(stream.ToArray());
