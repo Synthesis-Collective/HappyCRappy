@@ -11,6 +11,7 @@ using Mutagen.Bethesda.Serialization.Newtonsoft;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Serialization.Streams;
 using Mutagen.Bethesda.Plugins.Cache;
+using Mutagen.Bethesda.Serialization.Customizations;
 
 namespace HappyCRappy.SerializerLib;
 
@@ -47,4 +48,14 @@ public static class ModSerialization
 
         return result;
     }
+
+    /*
+    public class CustomizeOverall : ICustomize
+    {
+        public void Customize(ICustomizationBuilder builder)
+        {
+            builder
+                .FilePerRecord();
+        }
+    }*/
 }
