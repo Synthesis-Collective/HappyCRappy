@@ -28,8 +28,6 @@ public class SnapShotter
             throw new Exception("Link Cache is null");
         }
 
-        List<FormSnapshot> snapShots = new();
-
         SerializationType serialization = SerializationType.JSON; // temporary until added to settings
         string extension = "";
         switch(serialization)
@@ -38,7 +36,9 @@ public class SnapShotter
             case SerializationType.YAML: extension = ".yaml"; break;
         }
 
-        string dirPath = Path.Combine(_settingsProvider.Settings.SnapshotPath, $"{DateTime.Now:yyyy-MM-dd-HH-mm-ss}");
+        var now = DateTime.Now;
+        string dateStr = VM_Snapshot.ToLabelString(now);
+        string dirPath = Path.Combine(_settingsProvider.Settings.SnapshotPath, dateStr);
         IOFunctions.CreateDirectoryIfNeeded(dirPath, IOFunctions.PathType.Directory);
 
         foreach (var targetModKey in _settingsProvider.Settings.TrackedModKeys)
@@ -55,6 +55,9 @@ public class SnapShotter
             {
                 throw new Exception("Records are null");
             }
+
+            ModSnapshot modSnapshot = new();
+            modSnapshot.DateTaken = now;
 
             foreach (var record in records)
             {
@@ -76,10 +79,10 @@ public class SnapShotter
                     contextSnapShot.SerializationString = _serializer.SerializeRecord(context, serialization); // serialize here
                     formSnapShot.ContextSnapshots.Add(contextSnapShot);
                 }
-                snapShots.Add(formSnapShot);
+                modSnapshot.Snapshots.Add(formSnapShot);
             }
             string filePath = Path.Combine(dirPath, targetModKey.Name + extension);
-            JSONhandler<List<FormSnapshot>>.SaveJSONFile(snapShots, filePath, out _, out _);
+            JSONhandler<ModSnapshot>.SaveJSONFile(modSnapshot, filePath, out _, out _);
         }        
     }
 }

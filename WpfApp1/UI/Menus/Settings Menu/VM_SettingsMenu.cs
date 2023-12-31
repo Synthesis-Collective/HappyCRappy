@@ -38,6 +38,7 @@ public class VM_SettingsMenu : VM
     private readonly SettingsProvider _settingsProvider;
     public ObservableCollection<ModKey> TrackedModKeys { get; set; } = new();
     public string SnapshotPath { get; set; } = string.Empty;
+    public SerializationType SerializationFormat { get; set; } = SerializationType.JSON;
     public RelayCommand SetSnapshotPath { get; }
     public void ReadFromModel(HappyCrappySettings model)
     {
@@ -50,6 +51,7 @@ public class VM_SettingsMenu : VM
         {
             SnapshotPath = Path.Combine(_settingsProvider.GetExePath(), "Snapshots");
         }
+        SerializationFormat = model.SerializationSaveFormat;
 
         if (EnvironmentStateProvider is StandaloneEnvironmentStateProvider standaloneEnvironment)
         {
@@ -65,7 +67,8 @@ public class VM_SettingsMenu : VM
             GameType = EnvironmentStateProvider.GameType,
             DataFolderPath = EnvironmentStateProvider.DataFolderPath,
             TrackedModKeys = TrackedModKeys.ToList(),
-            SnapshotPath = SnapshotPath
+            SnapshotPath = SnapshotPath,
+            SerializationSaveFormat = SerializationFormat
         };
         return model;
     }

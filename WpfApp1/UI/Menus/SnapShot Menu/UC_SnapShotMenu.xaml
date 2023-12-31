@@ -8,6 +8,23 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Content="Take Snapshot" Command="{Binding TakeSnapShot}" Foreground="Green"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
+            <Button Content="Take Snapshot" Command="{Binding TakeSnapShot}" Foreground="Green" Margin="5 0 20 0"/>
+            <TextBlock Text="Compare to Snapshot" VerticalAlignment="Center"/>
+            <ComboBox SelectedItem="{Binding SelectedSnapshotDateStr}" ItemsSource="{Binding AvailableSnapshotDates}"/>
+            <TextBlock Text="Display as" Margin="5 0 5 0" VerticalAlignment="Center"/>
+            <RadioButton Content="JSON" IsChecked="{Binding DisplayAsJson}" GroupName="Serialization"/>
+            <RadioButton Content="YAML" IsChecked="{Binding DisplayAsYaml}" GroupName="Serialization"/>
+        </StackPanel>
     </Grid>
 </UserControl>

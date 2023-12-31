@@ -15,4 +15,6 @@ public class HappyCrappySettings
     public SkyrimRelease GameType { get; set; } = SkyrimRelease.SkyrimSE;
     public List<ModKey> TrackedModKeys { get; set; } = new();
     public string SnapshotPath { get; set; } = string.Empty;
+    public SerializationType SerializationSaveFormat { get; set; } = SerializationType.JSON;
+    public SerializationType SerializationViewDisplay { get; set; } = SerializationType.JSON;
 }

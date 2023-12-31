@@ -29,6 +29,7 @@
         <StackPanel Grid.Row="1" Grid.Column="2"  Orientation="Horizontal">
             <Button VerticalAlignment="Center" Command="{Binding SetSnapshotPath}" Foreground="LightGreen">Select</Button>
             <TextBlock Background="Black" HorizontalAlignment="Left" Text="{Binding Path=SnapshotPath, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 5 0"/>
+            <ComboBox SelectedValue="{Binding SerializationFormat}" ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:SerializationType}}}" IsSynchronizedWithCurrentItem="True"/>
         </StackPanel>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Conflict Resolution Patches"/>

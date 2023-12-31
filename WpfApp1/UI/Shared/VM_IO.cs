@@ -10,23 +10,25 @@ public class VM_IO
 {
     private readonly SettingsProvider _settingsProvider;
     private readonly VM_SettingsMenu _settingsMenu;
-    public VM_IO(SettingsProvider settingsProvider, VM_SettingsMenu settingsMenu)
+    private readonly VM_SnapshotMenu _snapshotMenu;
+    public VM_IO(SettingsProvider settingsProvider, VM_SettingsMenu settingsMenu, VM_SnapshotMenu snapshotMenu)
     {
         _settingsProvider = settingsProvider;
         _settingsMenu = settingsMenu;
+        _snapshotMenu = snapshotMenu;
     }
 
     public void CopyInViewModels()
     {
         _settingsProvider.LoadSettings();
         _settingsMenu.ReadFromModel(_settingsProvider.Settings);
-        // load in view models here
+        _snapshotMenu.ReadFromModel(_settingsProvider.Settings);
     }
 
     public void DumpViewModels()
     {
         _settingsProvider.Settings = _settingsMenu.DumpToModel();
         _settingsProvider.SaveSettings();
-        // dump view models to models here
+        _snapshotMenu.SaveSettings();
     }
 }
