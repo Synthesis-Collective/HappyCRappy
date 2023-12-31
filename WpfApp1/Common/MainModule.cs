@@ -19,5 +19,6 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<VM_SnapshotMenu>().AsSelf().SingleInstance();
 
         builder.RegisterType<SnapShotter>().AsSelf().SingleInstance();
+        builder.RegisterType<Serializer>().AsSelf().SingleInstance();
     }
 }

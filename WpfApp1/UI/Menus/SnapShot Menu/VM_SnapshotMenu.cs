@@ -9,7 +9,7 @@ namespace HappyCRappy;
 public class VM_SnapshotMenu : VM
 {
     private readonly SettingsProvider _settingsProvider;
-    public VM_SnapshotMenu(SettingsProvider settingsProvider) 
+    public VM_SnapshotMenu(SettingsProvider settingsProvider, SnapShotter snapShotter) 
     {
         _settingsProvider = settingsProvider;
 
@@ -17,7 +17,7 @@ public class VM_SnapshotMenu : VM
                 canExecute: _ => true,
                 execute: _ =>
                 {
-                    
+                    snapShotter.TakeSnapShot();
                 }
             );
     }
