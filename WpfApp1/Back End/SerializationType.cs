@@ -8,5 +8,6 @@ namespace HappyCRappy;
 
 public enum SerializationType
 {
-    JSON
+    JSON,
+    YAML
 }

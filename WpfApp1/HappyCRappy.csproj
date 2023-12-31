@@ -5,12 +5,17 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Mutagen.Bethesda" Version="0.42.0" />
     <PackageReference Include="Mutagen.Bethesda.Autofac" Version="0.42.0" />
     <PackageReference Include="Mutagen.Bethesda.Json" Version="0.42.0" />
+    <PackageReference Include="Mutagen.Bethesda.Serialization" Version="1.10.0" />
+    <PackageReference Include="Mutagen.Bethesda.Serialization.Newtonsoft" Version="1.10.0" />
+    <PackageReference Include="Mutagen.Bethesda.Serialization.SourceGenerator" Version="1.10.0" />
+    <PackageReference Include="Mutagen.Bethesda.Serialization.Yaml" Version="1.10.0" />
     <PackageReference Include="Mutagen.Bethesda.Synthesis" Version="0.26.0" />
     <PackageReference Include="Mutagen.Bethesda.Synthesis.WPF" Version="0.26.0" />
     <PackageReference Include="Mutagen.Bethesda.WPF" Version="0.42.0" />

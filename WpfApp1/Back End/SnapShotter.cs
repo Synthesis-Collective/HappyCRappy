@@ -13,10 +13,12 @@ public class SnapShotter
 {
     private readonly SettingsProvider _settingsProvider;
     private readonly IEnvironmentStateProvider _environmentStateProvider;
-    public SnapShotter(SettingsProvider settingsProvider, IEnvironmentStateProvider environmentStateProvider)
+    private readonly Serializer _serializer;
+    public SnapShotter(SettingsProvider settingsProvider, IEnvironmentStateProvider environmentStateProvider, Serializer serializer)
     {
         _settingsProvider = settingsProvider;
         _environmentStateProvider = environmentStateProvider;
+        _serializer = serializer;
     }
 
     public void TakeSnapShot()
@@ -33,7 +35,7 @@ public class SnapShotter
         foreach (var targetModKey in _settingsProvider.Settings.TrackedModKeys)
         {
             var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(targetModKey);
-            if (modListing != null)
+            if (modListing == null)
             {
                 MessageBox.Show("Could not find mod " + targetModKey.ToString() + " in current load order", "Error");
                 continue;
@@ -62,7 +64,7 @@ public class SnapShotter
                     var contextSnapShot = new FormContextSnapshot();
                     contextSnapShot.SourceModKey = context.ModKey;
                     contextSnapShot.SerializationType = serialization;
-                    contextSnapShot.SerializationString = ""; // serialize here
+                    contextSnapShot.SerializationString = _serializer.SerializeRecord(context.Record, serialization); // serialize here
                     formSnapShot.ContextSnapshots.Add(contextSnapShot);
                 }
             }
