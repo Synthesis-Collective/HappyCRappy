@@ -20,15 +20,15 @@ public class Serializer
 
     }
 
-    public string SerializeRecord(IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> recordContext, SerializationType type)
+    public (string, string) SerializeRecord(IModContext<ISkyrimMod, ISkyrimModGetter, IMajorRecord, IMajorRecordGetter> recordContext, SerializationType type)
     {
-        string output = string.Empty;
-        var tempMod = new SkyrimMod(new("temp.esp", Mutagen.Bethesda.Plugins.ModType.Plugin), SkyrimRelease.SkyrimSE);
+        (string, string) output = (string.Empty, string.Empty);
+        var tempMod = new SkyrimMod(new("temp", Mutagen.Bethesda.Plugins.ModType.Plugin), SkyrimRelease.SkyrimSE);
         recordContext.GetOrAddAsOverride(tempMod);
         switch(type)
         {
-            case SerializationType.JSON: output = ModSerialization.SerializeJSON(tempMod); break;
-            case SerializationType.YAML: output = ModSerialization.SerializeYaml(tempMod); break;
+            case SerializationType.JSON: output = ModSerialization.SerializeRecord(tempMod, "JSON"); break;
+            case SerializationType.YAML: output = ModSerialization.SerializeRecord(tempMod, "YAML"); break;
         }
         return output;
     }

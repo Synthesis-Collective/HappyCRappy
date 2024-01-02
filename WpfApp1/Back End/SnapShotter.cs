@@ -1,5 +1,7 @@
 using Mutagen.Bethesda;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
+using Noggog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +23,7 @@ public class SnapShotter
         _serializer = serializer;
     }
 
-    public void TakeSnapShot()
+    public void SaveSnapshots(ModKey[] modKeys)
     {
         if (_environmentStateProvider.LinkCache == null)
         {
@@ -30,7 +32,7 @@ public class SnapShotter
 
         SerializationType serialization = SerializationType.JSON; // temporary until added to settings
         string extension = "";
-        switch(serialization)
+        switch (serialization)
         {
             case SerializationType.JSON: extension = ".json"; break;
             case SerializationType.YAML: extension = ".yaml"; break;
@@ -41,48 +43,60 @@ public class SnapShotter
         string dirPath = Path.Combine(_settingsProvider.Settings.SnapshotPath, dateStr);
         IOFunctions.CreateDirectoryIfNeeded(dirPath, IOFunctions.PathType.Directory);
 
-        foreach (var targetModKey in _settingsProvider.Settings.TrackedModKeys)
+        foreach (var targetModKey in modKeys)
         {
-            var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(targetModKey);
-            if (modListing == null)
-            {
-                MessageBox.Show("Could not find mod " + targetModKey.ToString() + " in current load order", "Error");
-                continue;
-            }
-
-            var records = modListing?.Mod?.EnumerateMajorRecords();
-            if (records == null)
-            {
-                throw new Exception("Records are null");
-            }
-
-            ModSnapshot modSnapshot = new();
-            modSnapshot.DateTaken = now;
-
-            foreach (var record in records)
-            {
-                var formSnapShot = new FormSnapshot();
-                formSnapShot.FormKey = record.FormKey;
-                var contexts = _environmentStateProvider.LinkCache.ResolveAllContexts(record.FormKey).ToList();
-                formSnapShot.OverrideOrder = contexts.Select(x => x.ModKey).ToList();
-
-                if (contexts == null)
-                {
-                    throw new Exception("Contexts are null");
-                }
-
-                foreach (var context in contexts)
-                {
-                    var contextSnapShot = new FormContextSnapshot();
-                    contextSnapShot.SourceModKey = context.ModKey;
-                    contextSnapShot.SerializationType = serialization;
-                    contextSnapShot.SerializationString = _serializer.SerializeRecord(context, serialization); // serialize here
-                    formSnapShot.ContextSnapshots.Add(contextSnapShot);
-                }
-                modSnapshot.Snapshots.Add(formSnapShot);
-            }
+            var modSnapshot = TakeSnapShot(targetModKey, serialization, now);
             string filePath = Path.Combine(dirPath, targetModKey.Name + extension);
             JSONhandler<ModSnapshot>.SaveJSONFile(modSnapshot, filePath, out _, out _);
-        }        
+        }
+    }
+
+    public ModSnapshot TakeSnapShot(ModKey targetModKey, SerializationType serializationFormat, DateTime now)
+    {
+        var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(targetModKey);
+        if (modListing == null)
+        {
+            MessageBox.Show("Could not find mod " + targetModKey.ToString() + " in current load order", "Error");
+            return new();
+        }
+
+        var records = modListing?.Mod?.EnumerateMajorRecords();
+        if (records == null)
+        {
+            throw new Exception("Records are null");
+        }
+
+        ModSnapshot modSnapshot = new();
+        modSnapshot.CRModKey = targetModKey;
+        modSnapshot.DateTaken = now;
+
+        foreach (var record in records)
+        {
+            var formSnapShot = new FormSnapshot();
+            formSnapShot.FormKey = record.FormKey;
+            var contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(record.FormKey).ToList() ?? new();
+            formSnapShot.OverrideOrder = contexts.Select(x => x.ModKey).ToList();
+
+            if (contexts == null)
+            {
+                throw new Exception("Contexts are null");
+            }
+
+            foreach (var context in contexts)
+            {
+                var contextSnapShot = new FormContextSnapshot();
+                contextSnapShot.SourceModKey = context.ModKey;
+                contextSnapShot.SerializationType = serializationFormat;
+                var serialized = _serializer.SerializeRecord(context, serializationFormat); // serialize here
+                if (formSnapShot.RecordType.IsNullOrWhitespace())
+                {
+                    formSnapShot.RecordType = serialized.Item1;
+                }
+                contextSnapShot.SerializationString = serialized.Item2;
+                formSnapShot.ContextSnapshots.Add(contextSnapShot);
+            }
+            modSnapshot.Snapshots.Add(formSnapShot);
+        }
+        return modSnapshot;
     }
 }

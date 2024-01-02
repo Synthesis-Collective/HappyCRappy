@@ -11,5 +11,6 @@ public class FormSnapshot
 {
     public FormKey FormKey { get; set; }
     public List<ModKey> OverrideOrder { get; set; } = new();
+    public string RecordType { get; set; } = string.Empty;
     public List<FormContextSnapshot> ContextSnapshots { get; set; } = new();
 }

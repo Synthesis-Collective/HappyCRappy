@@ -26,5 +26,7 @@
             <RadioButton Content="JSON" IsChecked="{Binding DisplayAsJson}" GroupName="Serialization"/>
             <RadioButton Content="YAML" IsChecked="{Binding DisplayAsYaml}" GroupName="Serialization"/>
         </StackPanel>
+        
+        
     </Grid>
 </UserControl>

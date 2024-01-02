@@ -1,3 +1,4 @@
+using Mutagen.Bethesda.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace HappyCRappy;
 
 public class ModSnapshot
 {
+    public ModKey CRModKey { get; set; }
     public DateTime DateTaken { get; set; }
     public List<FormSnapshot> Snapshots { get; set; } = new();
 }
