@@ -1,3 +1,4 @@
+using Loqui;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
@@ -62,7 +63,7 @@ public class SnapShotter
             return new();
         }
 
-        var records = modListing?.Mod?.EnumerateMajorRecords();
+        var records = modListing?.Mod?.EnumerateMajorRecords().ToArray();
         if (records == null)
         {
             throw new Exception("Records are null");
@@ -76,7 +77,8 @@ public class SnapShotter
         {
             var formSnapShot = new FormSnapshot();
             formSnapShot.FormKey = record.FormKey;
-            var contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(record.FormKey).ToList() ?? new();
+            var registration = LoquiRegistration.StaticRegister.GetRegister(record.GetType());
+            var contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(record.FormKey, registration.GetterType).ToList() ?? new();
             contexts.Reverse();
             formSnapShot.OverrideOrder = contexts.Select(x => x.ModKey).ToList();
 
