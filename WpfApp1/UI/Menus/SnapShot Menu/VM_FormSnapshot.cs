@@ -8,6 +8,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Aspects;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using System.Windows.Media;
 
 namespace HappyCRappy;
 
@@ -37,6 +38,15 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
         CurrentContextOrder = string.Join(Environment.NewLine, currentSnapshot.OverrideOrder.Select(x => x.FileName));
 
         HasDifference = ContextVMs.Where(x => x.HasDifference).Any();
+
+        if (HasDifference)
+        {
+            BorderColor = new(Colors.Red);
+        }
+        else
+        {
+            BorderColor = new(Colors.White);
+        }
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Record;
@@ -47,6 +57,7 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
     public ObservableCollection<VM_FormContextSnapshot> ContextVMs { get; set; } = new();
     public VM_FormContextSnapshot? SelectedContextVM { get; set; }
     public bool HasDifference { get; set; } = false;
+    public SolidColorBrush BorderColor { get; set; }
     private readonly IEnvironmentStateProvider _environmentStateProvider;
     private readonly FormKey _formKey;
     public void GetDisplayString()
