@@ -10,7 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!--
@@ -29,7 +29,7 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderThickness="1" BorderBrush="White">
+                    <Border BorderThickness="1" BorderBrush="{Binding BorderColor}">
                         <TextBlock Text="{Binding ContextModKey}" Margin="5 2 5 2"/>
                     </Border>
                 </DataTemplate>

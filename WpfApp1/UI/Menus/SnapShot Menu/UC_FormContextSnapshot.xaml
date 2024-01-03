@@ -4,21 +4,24 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HappyCRappy"
+             xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
              d:DataContext="{d:DesignInstance Type=local:VM_FormContextSnapshot}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!--
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        -->
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding ContextModKey}"/>
+        <diffplex:DiffViewer Grid.Row="0" NewText="{Binding CurrentSerialization}" NewTextHeader="Current" OldText="{Binding SelectedSerialization}" OldTextHeader="Snapshot" />
 
     </Grid>
 </UserControl>

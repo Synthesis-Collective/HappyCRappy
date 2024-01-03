@@ -12,4 +12,5 @@ public interface ISnapshotDisplayNode
     public SnapshotDisplayNodeType NodeType { get; set; }
     public ObservableCollection<ISnapshotDisplayNode> SubNodes { get; set; }
     public string DisplayString { get; set; }
+    public bool HasDifference { get; set; }
 }

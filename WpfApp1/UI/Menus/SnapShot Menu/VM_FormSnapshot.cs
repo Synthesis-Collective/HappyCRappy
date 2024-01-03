@@ -32,6 +32,8 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
             var contextVM = new VM_FormContextSnapshot(selectedSnapshotContext, currentSnapshotContext, contextMod);
             ContextVMs.Add(contextVM);
         }
+
+        HasDifference = ContextVMs.Where(x => x.HasDifference).Any();
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Record;
@@ -39,6 +41,7 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
     public string DisplayString { get; set; } = string.Empty;
     public ObservableCollection<VM_FormContextSnapshot> ContextVMs { get; set; } = new();
     public VM_FormContextSnapshot? SelectedContextVM { get; set; }
+    public bool HasDifference { get; set; } = false;
     private readonly IEnvironmentStateProvider _environmentStateProvider;
     private readonly FormKey _formKey;
     public void GetDisplayString()

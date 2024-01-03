@@ -23,9 +23,11 @@ public class VM_CategorySnapshot : VM, ISnapshotDisplayNode
             var displayedRecord = formSnapshotFactory(snapshot.Item1, snapshot.Item2);
             SubNodes.Add(displayedRecord);
         }
+        HasDifference = SubNodes.Where(x => x.HasDifference).Any();
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Category;
     public ObservableCollection<ISnapshotDisplayNode> SubNodes { get; set; } = new();
     public string DisplayString { get; set; } = string.Empty;
+    public bool HasDifference { get; set; } = false;
 }

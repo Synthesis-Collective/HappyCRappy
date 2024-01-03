@@ -39,6 +39,8 @@ public class VM_Snapshot : VM
             var categoryVM = snapshotGroupFactory(category, pairedSelectedCurrentSnapshots);
             RecordCategories.Add(categoryVM);
         }
+
+        HasDifference = RecordCategories.Where(x => x.HasDifference).Any();
     }
 
     public ModSnapshot SelectedSnapshot { get; set; }
@@ -47,6 +49,7 @@ public class VM_Snapshot : VM
     public ObservableCollection<ISnapshotDisplayNode> RecordCategories { get; set; } = new();
     public ISnapshotDisplayNode? SelectedNode { get; set; }
     public string DateTakenStr => ToLabelString(DateTaken);
+    public bool HasDifference { get; set; } = false;
 
     public static string ToLabelString(DateTime timestamp)
     {
