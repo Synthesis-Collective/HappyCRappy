@@ -49,6 +49,8 @@ public class SnapShotter
             string filePath = Path.Combine(dirPath, targetModKey.Name + extension);
             JSONhandler<ModSnapshot>.SaveJSONFile(modSnapshot, filePath, out _, out _);
         }
+
+        MessageBox.Show("Saved Snapshot " + dirPath);
     }
 
     public ModSnapshot TakeSnapShot(ModKey targetModKey, SerializationType serializationFormat, DateTime now)
@@ -98,6 +100,7 @@ public class SnapShotter
             }
             modSnapshot.Snapshots.Add(formSnapShot);
         }
+
         return modSnapshot;
     }
 }
