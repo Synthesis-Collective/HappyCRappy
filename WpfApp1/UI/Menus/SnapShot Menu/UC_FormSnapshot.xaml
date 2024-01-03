@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HappyCRappy"
+             xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
              d:DataContext="{d:DesignInstance Type=local:VM_FormSnapshot}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -20,8 +22,9 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         -->
+        <diffplex:DiffViewer Grid.Row="0" NewText="{Binding CurrentContextOrder}" NewTextHeader="Current Load Order" OldText="{Binding SnapshotContextOrder}" OldTextHeader="Snapshot Load Order" />
 
-        <ListBox Grid.Row="0" ItemsSource="{Binding ContextVMs}" SelectedItem="{Binding SelectedContextVM}">
+        <ListBox Grid.Row="1" ItemsSource="{Binding ContextVMs}" SelectedItem="{Binding SelectedContextVM}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />
@@ -36,6 +39,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <local:UC_FormContextSnapshot Grid.Row="1" DataContext="{Binding SelectedContextVM}"/>
+        <local:UC_FormContextSnapshot Grid.Row="2" DataContext="{Binding SelectedContextVM}"/>
     </Grid>
 </UserControl>

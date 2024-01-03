@@ -33,12 +33,17 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
             ContextVMs.Add(contextVM);
         }
 
+        SnapshotContextOrder = string.Join(Environment.NewLine, selectedSnapshot.OverrideOrder.Select(x => x.FileName));
+        CurrentContextOrder = string.Join(Environment.NewLine, currentSnapshot.OverrideOrder.Select(x => x.FileName));
+
         HasDifference = ContextVMs.Where(x => x.HasDifference).Any();
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Record;
     public ObservableCollection<ISnapshotDisplayNode> SubNodes { get; set; } = new();
     public string DisplayString { get; set; } = string.Empty;
+    public string SnapshotContextOrder { get; set; }
+    public string CurrentContextOrder { get; set; }
     public ObservableCollection<VM_FormContextSnapshot> ContextVMs { get; set; } = new();
     public VM_FormContextSnapshot? SelectedContextVM { get; set; }
     public bool HasDifference { get; set; } = false;

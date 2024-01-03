@@ -75,6 +75,7 @@ public class SnapShotter
             var formSnapShot = new FormSnapshot();
             formSnapShot.FormKey = record.FormKey;
             var contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(record.FormKey).ToList() ?? new();
+            contexts.Reverse();
             formSnapShot.OverrideOrder = contexts.Select(x => x.ModKey).ToList();
 
             if (contexts == null)
