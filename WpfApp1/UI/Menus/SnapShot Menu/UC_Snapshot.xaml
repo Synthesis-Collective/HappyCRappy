@@ -1,0 +1,89 @@
+<UserControl x:Class="HappyCRappy.UC_Snapshot"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HappyCRappy"
+             d:DataContext="{d:DesignInstance Type=local:VM_Snapshot}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <local:ExtendedTreeView Grid.Row="1" Grid.Column="0" x:Name="TVsubgroups" 
+                SelectedItem_="{Binding SelectedNode, Mode=TwoWay}" ItemsSource="{Binding RecordCategories}" 
+                Margin="0 0 15 0"  ScrollViewer.CanContentScroll="True" 
+                ScrollViewer.VerticalScrollBarVisibility="Visible">
+
+            <local:ExtendedTreeView.Resources>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="FontFamily" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=(TextElement.FontFamily)}"/>
+                    <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=(TextElement.FontSize)}"/>
+                    <Setter Property="Margin" Value="3"/>
+                    <!-- Add any other visual properties you want to keep consistent -->
+                    <Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Gold"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                        <!-- I don't like overriding this because white is the default TreeView styrling, but with the other manually specified styling it changes to black -->
+                    </Style.Resources>
+                    <!--
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding VisibleChildOrSelfConfigVM}" Value="false">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding VisibleSelfConfigVM}" Value="false">
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding MatchesSearchStringConfigVM}" Value="true">
+                            <Setter Property="Foreground" Value="Aqua"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding HasSearchStringConfigVM}" Value="true">
+                            <Setter Property="IsExpanded" Value="True"/>
+                        </DataTrigger>
+                    </Style.Triggers> -->
+                </Style>
+            </local:ExtendedTreeView.Resources>
+
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type local:ISnapshotDisplayNode}" ItemsSource="{Binding SubNodes}">
+                    <Border BorderBrush="DarkSlateGray" BorderThickness="1" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5 0 5 0" VerticalAlignment="Center" Text="{Binding DisplayString}">
+                                <!--
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}">
+                                        <Binding Path="DisplayString"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                                -->
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </local:ExtendedTreeView>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+            <ContentPresenter Content="{Binding SelectedNode}" Name="SubgroupPresenter">
+                <ContentPresenter.Resources>
+                    <DataTemplate DataType="{x:Type local:VM_CategorySnapshot}">
+                        <TextBlock Text="PLACEHOLDER"/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:VM_FormSnapshot}">
+                        <local:UC_FormSnapshot Background="Black" Margin="0 0 0 10"/>
+                    </DataTemplate>
+                </ContentPresenter.Resources>
+            </ContentPresenter>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -15,25 +15,30 @@ public class VM_SnapshotMenu : VM
 {
     private readonly SettingsProvider _settingsProvider;
     private readonly SnapShotter _snapShotter;
-    public VM_SnapshotMenu(SettingsProvider settingsProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter) 
+    private readonly VM_Snapshot.Factory _snapshotVMFactory;
+    public VM_SnapshotMenu(SettingsProvider settingsProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter, VM_Snapshot.Factory snapshotVMFactory) 
     {
         _settingsProvider = settingsProvider;
         SettingsVM = settingsVM;
         _snapShotter = snapShotter;
+        _snapshotVMFactory = snapshotVMFactory;
 
         TakeSnapShot = new RelayCommand(
                 canExecute: _ => true,
                 execute: _ =>
                 {
                     _snapShotter.SaveSnapshots(settingsVM.TrackedModKeys.ToArray());
-                    RefreshAvailableSnapshots();
+                    RefreshAvailableSnapshotDates();
                 }
             );
 
-        this.WhenAnyValue(x => x.SelectedSnapshotDateStr, x => x.SelectedSnapshotMod).Subscribe(selection =>
-        {
-            LoadSnapshot(selection.Item1, selection.Item2);
-        }).DisposeWith(this);
+        this.WhenAnyValue(x => x.SelectedSnapshotDateStr)
+            .Subscribe(_ => RefreshAvailableSnapshotMods())
+            .DisposeWith(this);
+
+        this.WhenAnyValue(x => x.SelectedSnapshotMod)
+            .Subscribe(_ => LoadSnapshot())
+            .DisposeWith(this);
 
         this.WhenAnyValue(x => x.DisplayAsJson, x => x.DisplayAsYaml).Subscribe(
             _ =>
@@ -48,16 +53,18 @@ public class VM_SnapshotMenu : VM
                 }
             }).DisposeWith(this);
 
-        this.WhenAnyValue(x => x.SettingsVM.SnapshotPath).Subscribe(_ => RefreshAvailableSnapshots()).DisposeWith(this);
+        this.WhenAnyValue(x => x.SettingsVM.SnapshotPath).Subscribe(_ => RefreshAvailableSnapshotDates()).DisposeWith(this);
     }
 
     public RelayCommand TakeSnapShot { get; }
     public SerializationType SerializationType { get; set; } = SerializationType.JSON;
     public bool DisplayAsJson { get; set; }
     public bool DisplayAsYaml { get; set; }
+    private List<ModSnapshot> _loadedSnapshots { get; set; } = new();
     public ModKey? SelectedSnapshotMod { get; set; }
     public string? SelectedSnapshotDateStr { get; set; }
     public ObservableCollection<string> AvailableSnapshotDates { get; set; } = new();
+    public ObservableCollection<ModKey> AvailableSnapshotMods { get; set; } = new();
     public VM_Snapshot? DisplayedSnapshot { get; set; }
     public VM_SettingsMenu SettingsVM { get; }
 
@@ -75,25 +82,21 @@ public class VM_SnapshotMenu : VM
     {
         _settingsProvider.Settings.SerializationViewDisplay = SerializationType;
     }
-    private void LoadSnapshot(string? dateStr, ModKey? crModKey)
+    private void LoadSnapshot()
     {
-        if (!Directory.Exists(_settingsProvider.Settings.SnapshotPath) || dateStr == null || dateStr.IsNullOrWhitespace() || crModKey == null)
+        if (!Directory.Exists(_settingsProvider.Settings.SnapshotPath) || SelectedSnapshotMod == null)
         {
             return;
         }
-        foreach (var snapShotPath in Directory.GetFiles(_settingsProvider.Settings.SnapshotPath))
+        ModSnapshot? snapshot = _loadedSnapshots.Where(x => x.CRModKey.Equals(SelectedSnapshotMod)).FirstOrDefault();
+        if (snapshot != null)
         {
-            ModSnapshot? snapshot = JSONhandler<ModSnapshot>.LoadJSONFile(snapShotPath, out bool loaded, out string exceptionStr);
-            if (loaded && snapshot != null && VM_Snapshot.ToLabelString(snapshot.DateTaken) == dateStr && snapshot.CRModKey == SelectedSnapshotMod)
-            {
-                var currentSnapshot = _snapShotter.TakeSnapShot(crModKey.Value, SerializationType, DateTime.Now);
-                DisplayedSnapshot = new(snapshot, currentSnapshot);
-                break;
-            }
+            var currentSnapshot = _snapShotter.TakeSnapShot(SelectedSnapshotMod.Value, SerializationType, DateTime.Now);
+            DisplayedSnapshot = _snapshotVMFactory(snapshot, currentSnapshot);
         }
     }
 
-    private void RefreshAvailableSnapshots()
+    private void RefreshAvailableSnapshotDates()
     {
         if (!Directory.Exists(SettingsVM.SnapshotPath))
         {
@@ -112,5 +115,30 @@ public class VM_SnapshotMenu : VM
         }
 
         AvailableSnapshotDates.RemoveWhere(x => !currentDirNames.Contains(x));
+    }
+
+    private void RefreshAvailableSnapshotMods()
+    {
+        if (SelectedSnapshotDateStr == null || SelectedSnapshotDateStr.IsNullOrEmpty())
+        {
+            return;
+        }
+        var selectedDir = Path.Combine(SettingsVM.SnapshotPath, SelectedSnapshotDateStr);
+        if (!Directory.Exists(selectedDir))
+        {
+            return;
+        }
+
+        AvailableSnapshotMods.Clear();
+        _loadedSnapshots.Clear();
+        foreach (var entry in Directory.GetFiles(selectedDir))
+        {
+            var snapshot = JSONhandler<ModSnapshot>.LoadJSONFile(entry, out bool success, out _);
+            if (success && snapshot != null)
+            {
+                AvailableSnapshotMods.Add(snapshot.CRModKey);
+                _loadedSnapshots.Add(snapshot);
+            }
+        }
     }
 }

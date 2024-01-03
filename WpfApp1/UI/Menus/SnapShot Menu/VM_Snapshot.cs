@@ -10,7 +10,8 @@ namespace HappyCRappy;
 
 public class VM_Snapshot : VM
 {
-    public VM_Snapshot(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot)
+    public delegate VM_Snapshot Factory(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot);
+    public VM_Snapshot(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot, VM_CategorySnapshot.Factory snapshotGroupFactory)
     {
         SelectedSnapshot = selectedSnapshot;
         CurrentSnapShot = currentSnapshot;
@@ -35,7 +36,7 @@ public class VM_Snapshot : VM
                 pairedSelectedCurrentSnapshots.Add((selectedFormSnapshot, currentFormSnapshot));
             }
 
-            var categoryVM = new VM_CategorySnapshot(category, pairedSelectedCurrentSnapshots);
+            var categoryVM = snapshotGroupFactory(category, pairedSelectedCurrentSnapshots);
             RecordCategories.Add(categoryVM);
         }
     }
@@ -44,7 +45,7 @@ public class VM_Snapshot : VM
     public ModSnapshot CurrentSnapShot { get; set; }
     public DateTime DateTaken { get; set; }
     public ObservableCollection<ISnapshotDisplayNode> RecordCategories { get; set; } = new();
-
+    public ISnapshotDisplayNode? SelectedNode { get; set; }
     public string DateTakenStr => ToLabelString(DateTaken);
 
     public static string ToLabelString(DateTime timestamp)

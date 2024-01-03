@@ -10,6 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -22,11 +23,13 @@
             <Button Content="Take Snapshot" Command="{Binding TakeSnapShot}" Foreground="Green" Margin="5 0 20 0"/>
             <TextBlock Text="Compare to Snapshot" VerticalAlignment="Center"/>
             <ComboBox SelectedItem="{Binding SelectedSnapshotDateStr}" ItemsSource="{Binding AvailableSnapshotDates}"/>
+            <TextBlock Text="of mod" VerticalAlignment="Center"/>
+            <ComboBox SelectedItem="{Binding SelectedSnapshotMod}" ItemsSource="{Binding AvailableSnapshotMods}"/>
             <TextBlock Text="Display as" Margin="5 0 5 0" VerticalAlignment="Center"/>
             <RadioButton Content="JSON" IsChecked="{Binding DisplayAsJson}" GroupName="Serialization"/>
             <RadioButton Content="YAML" IsChecked="{Binding DisplayAsYaml}" GroupName="Serialization"/>
         </StackPanel>
-        
-        
+
+        <local:UC_Snapshot Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding DisplayedSnapshot}"/>
     </Grid>
 </UserControl>
