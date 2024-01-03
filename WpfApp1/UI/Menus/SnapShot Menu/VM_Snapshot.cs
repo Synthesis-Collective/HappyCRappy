@@ -31,8 +31,8 @@ public class VM_Snapshot : VM
 
             foreach (var formKey in allForms)
             {
-                var selectedFormSnapshot = selectedSnapshot.Snapshots.Where(x => x.FormKey.Equals(formKey)).First() ?? new FormSnapshot();
-                var currentFormSnapshot = currentSnapshot.Snapshots.Where(x => x.FormKey.Equals(formKey)).First() ?? new FormSnapshot();
+                var selectedFormSnapshot = selectedSnapshot.Snapshots.Where(x => x.FormKey.Equals(formKey)).FirstOrDefault() ?? new FormSnapshot();
+                var currentFormSnapshot = currentSnapshot.Snapshots.Where(x => x.FormKey.Equals(formKey)).FirstOrDefault() ?? new FormSnapshot();
                 pairedSelectedCurrentSnapshots.Add((selectedFormSnapshot, currentFormSnapshot));
             }
 

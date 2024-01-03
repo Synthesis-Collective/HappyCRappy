@@ -28,8 +28,8 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
 
         foreach (var contextMod in contextMods)
         {
-            var selectedSnapshotContext = selectedSnapshot.ContextSnapshots.Where(x => x.SourceModKey.Equals(contextMod)).First() ?? new FormContextSnapshot();
-            var currentSnapshotContext = currentSnapshot.ContextSnapshots.Where(x => x.SourceModKey.Equals(contextMod)).First() ?? new FormContextSnapshot();
+            var selectedSnapshotContext = selectedSnapshot.ContextSnapshots.Where(x => x.SourceModKey.Equals(contextMod)).FirstOrDefault() ?? new FormContextSnapshot();
+            var currentSnapshotContext = currentSnapshot.ContextSnapshots.Where(x => x.SourceModKey.Equals(contextMod)).FirstOrDefault() ?? new FormContextSnapshot();
             var contextVM = new VM_FormContextSnapshot(selectedSnapshotContext, currentSnapshotContext, contextMod);
             ContextVMs.Add(contextVM);
         }
