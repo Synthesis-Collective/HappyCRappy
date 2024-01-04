@@ -1,6 +1,7 @@
 using Loqui;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
+using Mutagen.Bethesda.Plugins.Records;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using System;
@@ -56,17 +57,10 @@ public class SnapShotter
 
     public ModSnapshot TakeSnapShot(ModKey targetModKey, SerializationType serializationFormat, DateTime now)
     {
-        var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(targetModKey);
-        if (modListing == null)
-        {
-            MessageBox.Show("Could not find mod " + targetModKey.ToString() + " in current load order", "Error");
-            return new();
-        }
-
-        var records = modListing?.Mod?.EnumerateMajorRecords().ToArray();
+        var records = GetModRecords(targetModKey);
         if (records == null)
         {
-            throw new Exception("Records are null");
+            throw new Exception("Mod " + targetModKey.ToString() + " does not exist");
         }
 
         ModSnapshot modSnapshot = new();
@@ -100,9 +94,27 @@ public class SnapShotter
                 contextSnapShot.SerializationString = serialized.Item2;
                 formSnapShot.ContextSnapshots.Add(contextSnapShot);
             }
-            modSnapshot.Snapshots.Add(formSnapShot);
+            modSnapshot.SnapshotsByType.Add(formSnapShot);
         }
 
         return modSnapshot;
+    }
+
+    public IMajorRecordGetter[]? GetModRecords(ModKey modKey)
+    {
+        var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(modKey);
+        if (modListing == null)
+        {
+            MessageBox.Show("Could not find mod " + modKey.ToString() + " in current load order", "Error");
+            return null;
+        }
+
+        var records = modListing?.Mod?.EnumerateMajorRecords().ToArray();
+        if (records == null)
+        {
+            throw new Exception("Records are null");
+        }
+
+        return records;
     }
 }

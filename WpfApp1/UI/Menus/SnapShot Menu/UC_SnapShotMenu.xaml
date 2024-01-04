@@ -19,16 +19,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
+        <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal">
             <Button Content="Take Snapshot" Command="{Binding TakeSnapShot}" Foreground="Green" Margin="5 0 20 0"/>
             <TextBlock Text="Compare to Snapshot" VerticalAlignment="Center"/>
-            <ComboBox SelectedItem="{Binding SelectedSnapshotDateStr}" ItemsSource="{Binding AvailableSnapshotDates}"/>
+            <ComboBox SelectedItem="{Binding SelectedSnapshotDateStr}" ItemsSource="{Binding AvailableSnapshotDates}" Margin="5 0 5 0"/>
             <TextBlock Text="of mod" VerticalAlignment="Center"/>
-            <ComboBox SelectedItem="{Binding SelectedSnapshotMod}" ItemsSource="{Binding AvailableSnapshotMods}"/>
+            <ComboBox SelectedItem="{Binding SelectedSnapshotMod}" ItemsSource="{Binding AvailableSnapshotMods}"  Margin="5 0 5 0"/>
             <TextBlock Text="Display as" Margin="5 0 5 0" VerticalAlignment="Center"/>
-            <RadioButton Content="JSON" IsChecked="{Binding DisplayAsJson}" GroupName="Serialization"/>
-            <RadioButton Content="YAML" IsChecked="{Binding DisplayAsYaml}" GroupName="Serialization"/>
-        </StackPanel>
+            <RadioButton Content="JSON" IsChecked="{Binding DisplayAsJson}" GroupName="Serialization"  Margin="5 0 5 0"/>
+            <RadioButton Content="YAML" IsChecked="{Binding DisplayAsYaml}" GroupName="Serialization" Margin="5 0 5 0"/>
+            <TextBlock Text="Hide non-conflicting records" Margin="5 0 5 0" VerticalAlignment="Center"/>
+            <CheckBox IsChecked="{Binding ShowOnlyConflicts}"/>
+            <TextBlock Text="Show potential conflicts" Margin="5 0 5 0" VerticalAlignment="Center"/>
+            <CheckBox IsChecked="{Binding ShowPotentialConflicts}"/>
+        </WrapPanel>
 
         <local:UC_ModDisplay Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding DisplayedSnapshot}"/>
     </Grid>

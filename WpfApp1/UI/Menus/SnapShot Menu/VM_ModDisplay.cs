@@ -17,22 +17,22 @@ public class VM_ModDisplay : VM
         CurrentSnapShot = currentSnapshot;
         DateTaken = selectedSnapshot.DateTaken;
 
-        var categories = selectedSnapshot.Snapshots.Select(x => x.RecordType)
-            .And(currentSnapshot.Snapshots.Select(y => y.RecordType))
+        var categories = selectedSnapshot.SnapshotsByType.Select(x => x.RecordType)
+            .And(currentSnapshot.SnapshotsByType.Select(y => y.RecordType))
             .Distinct();
 
         foreach (var category in categories)
         {
             List<(FormSnapshot, FormSnapshot)> pairedSelectedCurrentSnapshots = new();
 
-            var selectedForms = selectedSnapshot.Snapshots.Where(x => x.RecordType == category).Select(x => x.FormKey).ToArray();
-            var currentForms = currentSnapshot.Snapshots.Where(x => x.RecordType == category).Select(x => x.FormKey).ToArray();
+            var selectedForms = selectedSnapshot.SnapshotsByType.Where(x => x.RecordType == category).Select(x => x.FormKey).ToArray();
+            var currentForms = currentSnapshot.SnapshotsByType.Where(x => x.RecordType == category).Select(x => x.FormKey).ToArray();
             var allForms = selectedForms.And(currentForms).Distinct().ToArray();
 
             foreach (var formKey in allForms)
             {
-                var selectedFormSnapshot = selectedSnapshot.Snapshots.Where(x => x.FormKey.Equals(formKey)).FirstOrDefault() ?? new FormSnapshot();
-                var currentFormSnapshot = currentSnapshot.Snapshots.Where(x => x.FormKey.Equals(formKey)).FirstOrDefault() ?? new FormSnapshot();
+                var selectedFormSnapshot = selectedSnapshot.SnapshotsByType.Where(x => x.FormKey.Equals(formKey)).FirstOrDefault() ?? new FormSnapshot();
+                var currentFormSnapshot = currentSnapshot.SnapshotsByType.Where(x => x.FormKey.Equals(formKey)).FirstOrDefault() ?? new FormSnapshot();
                 pairedSelectedCurrentSnapshots.Add((selectedFormSnapshot, currentFormSnapshot));
             }
 

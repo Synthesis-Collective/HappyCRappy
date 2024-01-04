@@ -11,5 +11,5 @@ public class ModSnapshot
 {
     public ModKey CRModKey { get; set; }
     public DateTime DateTaken { get; set; }
-    public List<FormSnapshot> Snapshots { get; set; } = new();
+    public List<FormSnapshot> SnapshotsByType { get; set; } = new();
 }

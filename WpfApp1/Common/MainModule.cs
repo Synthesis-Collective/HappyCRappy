@@ -24,5 +24,6 @@ internal class MainModule : Autofac.Module
 
         builder.RegisterType<SnapShotter>().AsSelf().SingleInstance();
         builder.RegisterType<Serializer>().AsSelf().SingleInstance();
+        builder.RegisterType<PotentialConflictFinder>().AsSelf().SingleInstance();
     }
 }

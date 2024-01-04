@@ -15,12 +15,14 @@ public class VM_SnapshotMenu : VM
 {
     private readonly SettingsProvider _settingsProvider;
     private readonly SnapShotter _snapShotter;
+    private readonly PotentialConflictFinder _conflictFinder;
     private readonly VM_ModDisplay.Factory _snapshotVMFactory;
-    public VM_SnapshotMenu(SettingsProvider settingsProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter, VM_ModDisplay.Factory snapshotVMFactory) 
+    public VM_SnapshotMenu(SettingsProvider settingsProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter, PotentialConflictFinder conflictFinder, VM_ModDisplay.Factory snapshotVMFactory) 
     {
         _settingsProvider = settingsProvider;
         SettingsVM = settingsVM;
         _snapShotter = snapShotter;
+        _conflictFinder = conflictFinder;
         _snapshotVMFactory = snapshotVMFactory;
 
         TakeSnapShot = new RelayCommand(
@@ -60,6 +62,8 @@ public class VM_SnapshotMenu : VM
     public SerializationType SerializationType { get; set; } = SerializationType.JSON;
     public bool DisplayAsJson { get; set; }
     public bool DisplayAsYaml { get; set; }
+    public bool ShowOnlyConflicts { get; set; } = true;
+    public bool ShowPotentialConflicts { get; set; } = true;
     private List<ModSnapshot> _loadedSnapshots { get; set; } = new();
     public ModKey? SelectedSnapshotMod { get; set; }
     public string? SelectedSnapshotDateStr { get; set; }
@@ -76,11 +80,15 @@ public class VM_SnapshotMenu : VM
             case SerializationType.JSON: DisplayAsJson = true; DisplayAsYaml = false; break;
             case SerializationType.YAML: DisplayAsJson = false; DisplayAsYaml = true; break;
         }
+        ShowOnlyConflicts = settings.ShowOnlyConflicts;
+        ShowPotentialConflicts = settings.ShowPotentialConflicts;
     }
 
     public void SaveSettings()
     {
         _settingsProvider.Settings.SerializationViewDisplay = SerializationType;
+        _settingsProvider.Settings.ShowOnlyConflicts = ShowOnlyConflicts;
+        _settingsProvider.Settings.ShowPotentialConflicts = ShowPotentialConflicts;
     }
     private void LoadSnapshot()
     {
@@ -92,6 +100,13 @@ public class VM_SnapshotMenu : VM
         if (snapshot != null)
         {
             var currentSnapshot = _snapShotter.TakeSnapShot(SelectedSnapshotMod.Value, SerializationType, DateTime.Now);
+
+            var potentialConflicts = new Dictionary<string, List<PotentialConflictFinder.PotentialConflictRecord>>();
+            if(ShowPotentialConflicts)
+            {
+                potentialConflicts = _conflictFinder.FindConflicts(SelectedSnapshotMod.Value, GetAllRootFormKeys(new List<ModSnapshot>() { currentSnapshot, snapshot}), SerializationType);
+            }
+
             DisplayedSnapshot = _snapshotVMFactory(snapshot, currentSnapshot);
         }
     }
@@ -115,6 +130,7 @@ public class VM_SnapshotMenu : VM
         }
 
         AvailableSnapshotDates.RemoveWhere(x => !currentDirNames.Contains(x));
+        AvailableSnapshotDates.Insert(0, "");
     }
 
     private void RefreshAvailableSnapshotMods()
@@ -140,5 +156,21 @@ public class VM_SnapshotMenu : VM
                 _loadedSnapshots.Add(snapshot);
             }
         }
+    }
+
+    private List<FormKey> GetAllRootFormKeys(IEnumerable<ModSnapshot> snapshots)
+    {
+        List<FormKey> formKeys = new();
+        foreach (var snapshot in snapshots)
+        {
+            foreach (var byType in snapshot.SnapshotsByType)
+            {
+                if (!formKeys.Contains(byType.FormKey))
+                {
+                    formKeys.Add(byType.FormKey);
+                }
+            }
+        }
+        return formKeys;
     }
 }
