@@ -18,8 +18,8 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<VM_SettingsMenu>().AsSelf().SingleInstance();
         builder.RegisterType<VM_SnapshotMenu>().AsSelf().SingleInstance();
 
-        builder.RegisterType<VM_Snapshot>().AsSelf();
-        builder.RegisterType<VM_CategorySnapshot>().AsSelf();
+        builder.RegisterType<VM_ModDisplay>().AsSelf();
+        builder.RegisterType<VM_RecordCategoryDisplay>().AsSelf();
         builder.RegisterType<VM_FormSnapshot>().AsSelf();
 
         builder.RegisterType<SnapShotter>().AsSelf().SingleInstance();

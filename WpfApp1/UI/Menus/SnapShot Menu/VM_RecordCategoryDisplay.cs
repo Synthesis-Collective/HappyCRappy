@@ -12,10 +12,10 @@ using System.Windows.Media;
 
 namespace HappyCRappy;
 
-public class VM_CategorySnapshot : VM, ISnapshotDisplayNode
+public class VM_RecordCategoryDisplay : VM, ISnapshotDisplayNode
 {
-    public delegate VM_CategorySnapshot Factory(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots);
-    public VM_CategorySnapshot(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, VM_FormSnapshot.Factory formSnapshotFactory)
+    public delegate VM_RecordCategoryDisplay Factory(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots);
+    public VM_RecordCategoryDisplay(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, VM_FormSnapshot.Factory formSnapshotFactory)
     {
         DisplayString = recordType;
 

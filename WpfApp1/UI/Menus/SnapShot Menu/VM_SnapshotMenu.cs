@@ -15,8 +15,8 @@ public class VM_SnapshotMenu : VM
 {
     private readonly SettingsProvider _settingsProvider;
     private readonly SnapShotter _snapShotter;
-    private readonly VM_Snapshot.Factory _snapshotVMFactory;
-    public VM_SnapshotMenu(SettingsProvider settingsProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter, VM_Snapshot.Factory snapshotVMFactory) 
+    private readonly VM_ModDisplay.Factory _snapshotVMFactory;
+    public VM_SnapshotMenu(SettingsProvider settingsProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter, VM_ModDisplay.Factory snapshotVMFactory) 
     {
         _settingsProvider = settingsProvider;
         SettingsVM = settingsVM;
@@ -65,7 +65,7 @@ public class VM_SnapshotMenu : VM
     public string? SelectedSnapshotDateStr { get; set; }
     public ObservableCollection<string> AvailableSnapshotDates { get; set; } = new();
     public ObservableCollection<ModKey> AvailableSnapshotMods { get; set; } = new();
-    public VM_Snapshot? DisplayedSnapshot { get; set; }
+    public VM_ModDisplay? DisplayedSnapshot { get; set; }
     public VM_SettingsMenu SettingsVM { get; }
 
     public void ReadFromModel(HappyCrappySettings settings)

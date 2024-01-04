@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace HappyCRappy
 {
     /// <summary>
-    /// Interaction logic for UC_Snapshot.xaml
+    /// Interaction logic for UC_ModDisplay.xaml
     /// </summary>
-    public partial class UC_Snapshot : UserControl
+    public partial class UC_ModDisplay : UserControl
     {
-        public UC_Snapshot()
+        public UC_ModDisplay()
         {
             InitializeComponent();
         }

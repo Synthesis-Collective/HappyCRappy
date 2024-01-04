@@ -40,7 +40,7 @@ public class SnapShotter
         }
 
         var now = DateTime.Now;
-        string dateStr = VM_Snapshot.ToLabelString(now);
+        string dateStr = VM_ModDisplay.ToLabelString(now);
         string dirPath = Path.Combine(_settingsProvider.Settings.SnapshotPath, dateStr);
         IOFunctions.CreateDirectoryIfNeeded(dirPath, IOFunctions.PathType.Directory);
 

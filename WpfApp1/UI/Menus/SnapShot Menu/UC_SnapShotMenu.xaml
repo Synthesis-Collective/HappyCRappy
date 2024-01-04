@@ -30,6 +30,6 @@
             <RadioButton Content="YAML" IsChecked="{Binding DisplayAsYaml}" GroupName="Serialization"/>
         </StackPanel>
 
-        <local:UC_Snapshot Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding DisplayedSnapshot}"/>
+        <local:UC_ModDisplay Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding DisplayedSnapshot}"/>
     </Grid>
 </UserControl>

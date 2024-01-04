@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace HappyCRappy;
 
-public class VM_Snapshot : VM
+public class VM_ModDisplay : VM
 {
-    public delegate VM_Snapshot Factory(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot);
-    public VM_Snapshot(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot, VM_CategorySnapshot.Factory snapshotGroupFactory)
+    public delegate VM_ModDisplay Factory(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot);
+    public VM_ModDisplay(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot, VM_RecordCategoryDisplay.Factory snapshotGroupFactory)
     {
         SelectedSnapshot = selectedSnapshot;
         CurrentSnapShot = currentSnapshot;
