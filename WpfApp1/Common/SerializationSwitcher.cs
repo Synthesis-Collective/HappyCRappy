@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Dynamic;
 
 namespace HappyCRappy;
 
@@ -23,15 +24,15 @@ public class SerializationSwitcher
             return currentSerialization;
         }
 
-        object? deserialized = new();
+        ExpandoObject? deserialized = new();
 
         if(currentSerializationType == SerializationType.JSON)
         {
-            deserialized = JSONhandler<object>.Deserialize(currentSerialization, out success, out exceptionStr);
+            deserialized = JSONhandler<ExpandoObject>.Deserialize(currentSerialization, out success, out exceptionStr);
         }
         else if (currentSerializationType == SerializationType.YAML)
         {
-            deserialized = YAMLHandler<object>.Deserialize(currentSerialization, out success, out exceptionStr);
+            deserialized = YAMLHandler<ExpandoObject>.Deserialize(currentSerialization, out success, out exceptionStr);
         }
 
         if(!success)
@@ -47,11 +48,11 @@ public class SerializationSwitcher
         string? output = string.Empty;
         if(newSerializationType == SerializationType.JSON)
         {
-            output = JSONhandler<object>.Serialize(deserialized, out success, out exceptionStr);
+            output = JSONhandler<ExpandoObject>.Serialize(deserialized, out success, out exceptionStr);
         }
         else if (newSerializationType == SerializationType.YAML)
         {
-            output = YAMLHandler<object>.Serialize(deserialized, out success, out exceptionStr);
+            output = YAMLHandler<ExpandoObject>.Serialize(deserialized, out success, out exceptionStr);
         }
 
         if (!success)
