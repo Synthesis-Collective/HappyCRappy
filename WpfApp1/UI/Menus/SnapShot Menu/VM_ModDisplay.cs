@@ -10,8 +10,8 @@ namespace HappyCRappy;
 
 public class VM_ModDisplay : VM
 {
-    public delegate VM_ModDisplay Factory(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot);
-    public VM_ModDisplay(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot, VM_RecordCategoryDisplay.Factory snapshotGroupFactory)
+    public delegate VM_ModDisplay Factory(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot, Dictionary<string, List<PotentialConflictFinder.PotentialConflictRecord>> potentialConflicts);
+    public VM_ModDisplay(ModSnapshot selectedSnapshot, ModSnapshot currentSnapshot, Dictionary<string, List<PotentialConflictFinder.PotentialConflictRecord>> potentialConflicts, VM_RecordCategoryDisplay.Factory snapshotGroupFactory)
     {
         SelectedSnapshot = selectedSnapshot;
         CurrentSnapShot = currentSnapshot;
@@ -36,7 +36,12 @@ public class VM_ModDisplay : VM
                 pairedSelectedCurrentSnapshots.Add((selectedFormSnapshot, currentFormSnapshot));
             }
 
-            var categoryVM = snapshotGroupFactory(category, pairedSelectedCurrentSnapshots);
+            potentialConflicts.TryGetValue(category, out var conflictsInCategory);
+            if (conflictsInCategory == null)
+            {
+                conflictsInCategory = new();
+            }
+            var categoryVM = snapshotGroupFactory(category, pairedSelectedCurrentSnapshots, conflictsInCategory);
             RecordCategories.Add(categoryVM);
         }
 

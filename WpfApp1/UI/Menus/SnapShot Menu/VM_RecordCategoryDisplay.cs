@@ -14,8 +14,8 @@ namespace HappyCRappy;
 
 public class VM_RecordCategoryDisplay : VM, ISnapshotDisplayNode
 {
-    public delegate VM_RecordCategoryDisplay Factory(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots);
-    public VM_RecordCategoryDisplay(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, VM_FormSnapshot.Factory formSnapshotFactory)
+    public delegate VM_RecordCategoryDisplay Factory(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, List<PotentialConflictFinder.PotentialConflictRecord> potentialConflicts);
+    public VM_RecordCategoryDisplay(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, List<PotentialConflictFinder.PotentialConflictRecord> potentialConflicts, VM_FormSnapshot.Factory formSnapshotFactory, VM_PotentialFormConflict.Factory potentialConflictFactory)
     {
         DisplayString = recordType;
 
@@ -24,6 +24,13 @@ public class VM_RecordCategoryDisplay : VM, ISnapshotDisplayNode
             var displayedRecord = formSnapshotFactory(snapshot.Item1, snapshot.Item2);
             SubNodes.Add(displayedRecord);
         }
+
+        foreach (var potentialConflict in potentialConflicts)
+        {
+            var potentialConflictVM = potentialConflictFactory(potentialConflict);
+            SubNodes.Add(potentialConflictVM);
+        }
+
         HasDifference = SubNodes.Where(x => x.HasDifference).Any();
 
         if (HasDifference)

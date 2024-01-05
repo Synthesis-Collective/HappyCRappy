@@ -21,6 +21,8 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<VM_ModDisplay>().AsSelf();
         builder.RegisterType<VM_RecordCategoryDisplay>().AsSelf();
         builder.RegisterType<VM_FormSnapshot>().AsSelf();
+        builder.RegisterType<VM_PotentialFormConflict>().AsSelf();
+        builder.RegisterType<VM_PotentialFormContextConflict>().AsSelf();
 
         builder.RegisterType<SnapShotter>().AsSelf().SingleInstance();
         builder.RegisterType<Serializer>().AsSelf().SingleInstance();

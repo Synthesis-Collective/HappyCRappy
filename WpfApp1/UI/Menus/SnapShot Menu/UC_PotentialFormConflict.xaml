@@ -1,0 +1,34 @@
+<UserControl x:Class="HappyCRappy.UC_PotentialFormConflict"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:diffplex="clr-namespace:DiffPlex.Wpf.Controls;assembly=DiffPlex.Wpf"
+             d:DataContext="{d:DesignInstance Type=local:VM_PotentialFormConflict}"
+             xmlns:local="clr-namespace:HappyCRappy"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ListBox Grid.Row="0" ItemsSource="{Binding ContextPairingVMs}" SelectedItem="{Binding SelectedContextPairVM}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="1" BorderBrush="{Binding BorderColor}">
+                        <TextBlock Text="{Binding DisplayString}" Margin="5 2 5 2"/>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <local:UC_PotentialFormContextConflict Grid.Row="1" DataContext="{Binding SelectedContextPairVM}"/>
+    </Grid>
+</UserControl>
