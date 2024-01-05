@@ -13,7 +13,7 @@ namespace HappyCRappy;
 public class VM_PotentialFormConflict: VM, ISnapshotDisplayNode
 {
     public delegate VM_PotentialFormConflict Factory(PotentialConflictFinder.PotentialConflictRecord data);
-    public VM_PotentialFormConflict(PotentialConflictFinder.PotentialConflictRecord data, IEnvironmentStateProvider environmentStateProvider)
+    public VM_PotentialFormConflict(PotentialConflictFinder.PotentialConflictRecord data, IEnvironmentStateProvider environmentStateProvider, VM_SnapshotMenu snapshotMenu, VM_PotentialFormContextConflict.Factory contextConflictFactory)
     {
         _environmentStateProvider = environmentStateProvider;
         _formKey = data.RecordFormKey;
@@ -24,7 +24,7 @@ public class VM_PotentialFormConflict: VM, ISnapshotDisplayNode
         {
             for (int j = i + 1; j < dataList.Count; j++)
             {
-                ContextPairingVMs.Add(new(dataList[i], dataList[j]));
+                ContextPairingVMs.Add(contextConflictFactory(dataList[i], dataList[j], snapshotMenu.SerializationType));
             }
         }
     }

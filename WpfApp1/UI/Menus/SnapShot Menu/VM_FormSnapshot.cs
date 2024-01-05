@@ -15,7 +15,7 @@ namespace HappyCRappy;
 public class VM_FormSnapshot : VM, ISnapshotDisplayNode
 {
     public delegate VM_FormSnapshot Factory(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot);
-    public VM_FormSnapshot(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot, IEnvironmentStateProvider environmentStateProvider)
+    public VM_FormSnapshot(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot, IEnvironmentStateProvider environmentStateProvider, VM_FormContextSnapshot.Factory contextSnapshotFactory)
     {
         _environmentStateProvider = environmentStateProvider;
         _formKey = selectedSnapshot.FormKey;
@@ -30,7 +30,7 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
         {
             var selectedSnapshotContext = selectedSnapshot.ContextSnapshots.Where(x => x.SourceModKey.Equals(contextMod)).FirstOrDefault() ?? new FormContextSnapshot();
             var currentSnapshotContext = currentSnapshot.ContextSnapshots.Where(x => x.SourceModKey.Equals(contextMod)).FirstOrDefault() ?? new FormContextSnapshot();
-            var contextVM = new VM_FormContextSnapshot(selectedSnapshotContext, currentSnapshotContext, contextMod);
+            var contextVM = contextSnapshotFactory(selectedSnapshotContext, currentSnapshotContext, contextMod);
             ContextVMs.Add(contextVM);
         }
 

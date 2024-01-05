@@ -1,16 +1,22 @@
 using Mutagen.Bethesda.Plugins;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Noggog;
+
 namespace HappyCRappy;
 
-public class VM_PotentialFormContextConflict
+public class VM_PotentialFormContextConflict : VM
 {
-    public VM_PotentialFormContextConflict(KeyValuePair<ModKey, string> serialization1, KeyValuePair<ModKey, string> serialization2)
+    public delegate VM_PotentialFormContextConflict Factory(KeyValuePair<ModKey, string> serialization1, KeyValuePair<ModKey, string> serialization2, SerializationType serializationType);
+    public VM_PotentialFormContextConflict(KeyValuePair<ModKey, string> serialization1, KeyValuePair<ModKey, string> serialization2, SerializationType serializationType, SerializationSwitcher serializationSwitcher, VM_SnapshotMenu snapshotMenu)
     {
+        _serializationSwitcher = serializationSwitcher;
+
         Serialization1 = serialization1.Value;
         Serialization2 = serialization2.Value;
         ModName1 = serialization1.Key.FileName;
@@ -28,6 +34,19 @@ public class VM_PotentialFormContextConflict
         }
 
         DisplayString = string.Join(Environment.NewLine, ModName1, "vs.", ModName2);
+
+        SerializationType1 = serializationType;
+        SerializationType2 = serializationType;
+
+        if (snapshotMenu.SerializationType != SerializationType1 || snapshotMenu.SerializationType != SerializationType2)
+        {
+            UpdateSerialization(snapshotMenu.SerializationType);
+        }
+
+        this.WhenAnyValue(x => snapshotMenu.SerializationType).Subscribe(newSerializationType =>
+        {
+            UpdateSerialization(newSerializationType);
+        }).DisposeWith(this);
     }
 
     public bool HasDifference { get; set; } = false;
@@ -37,4 +56,28 @@ public class VM_PotentialFormContextConflict
     public string ModName2 { get; set; }
     public string DisplayString { get; set; }
     public SolidColorBrush BorderColor { get; set; }
+    public SerializationType SerializationType1 { get; set; }
+    public SerializationType SerializationType2 { get; set; }
+    private readonly SerializationSwitcher _serializationSwitcher;
+
+    public void UpdateSerialization(SerializationType newSerializationType)
+    {
+        Serialization1 = _serializationSwitcher.SwitchSerialization(Serialization1, SerializationType1, newSerializationType, out bool success1, out string exceptionStr1);
+        Serialization2 = _serializationSwitcher.SwitchSerialization(Serialization2, SerializationType2, newSerializationType, out bool success2, out string exceptionStr2);
+
+        string errorMessage = string.Empty;
+        if (success1)
+        {
+            SerializationType1 = newSerializationType;
+        }
+        if (success2)
+        {
+            SerializationType2 = newSerializationType;
+        }
+
+        if (!success1 || !success2)
+        {
+            errorMessage = string.Join(Environment.NewLine + Environment.NewLine + "//////" + Environment.NewLine + Environment.NewLine, exceptionStr1, exceptionStr2);
+        }
+    }
 }

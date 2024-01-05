@@ -25,16 +25,15 @@ public class SnapShotter
         _serializer = serializer;
     }
 
-    public void SaveSnapshots(ModKey[] modKeys)
+    public void SaveSnapshots(ModKey[] modKeys, SerializationType serializationType)
     {
         if (_environmentStateProvider.LinkCache == null)
         {
             throw new Exception("Link Cache is null");
         }
 
-        SerializationType serialization = SerializationType.JSON; // temporary until added to settings
         string extension = "";
-        switch (serialization)
+        switch (serializationType)
         {
             case SerializationType.JSON: extension = ".json"; break;
             case SerializationType.YAML: extension = ".yaml"; break;
@@ -47,7 +46,7 @@ public class SnapShotter
 
         foreach (var targetModKey in modKeys)
         {
-            var modSnapshot = TakeSnapShot(targetModKey, serialization, now);
+            var modSnapshot = TakeSnapShot(targetModKey, serializationType, now);
             string filePath = Path.Combine(dirPath, targetModKey.Name + extension);
             JSONhandler<ModSnapshot>.SaveJSONFile(modSnapshot, filePath, out _, out _);
         }

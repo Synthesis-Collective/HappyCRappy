@@ -29,7 +29,7 @@ public class VM_SnapshotMenu : VM
                 canExecute: _ => true,
                 execute: _ =>
                 {
-                    _snapShotter.SaveSnapshots(settingsVM.TrackedModKeys.ToArray());
+                    _snapShotter.SaveSnapshots(settingsVM.TrackedModKeys.ToArray(), SerializationType);
                     RefreshAvailableSnapshotDates();
                 }
             );
