@@ -24,6 +24,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        BindingErrorListener.Register(); // for debugging
 
         SynthesisPipeline.Instance
             //.SetOpenForSettings(OpenForSettings)
