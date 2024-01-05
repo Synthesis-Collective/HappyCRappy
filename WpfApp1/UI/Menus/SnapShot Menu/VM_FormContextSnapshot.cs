@@ -16,10 +16,25 @@ public class VM_FormContextSnapshot : VM
     public VM_FormContextSnapshot(FormContextSnapshot selectedSnapshot, FormContextSnapshot currentSnapshot, ModKey contextMod, VM_SnapshotMenu snapshotMenu, SerializationSwitcher serializationSwitcher)
     {
         _serializationSwitcher = serializationSwitcher;
+        _snapshotMenu = snapshotMenu;
 
         ContextModKey = contextMod;
         SelectedSerialization = selectedSnapshot.SerializationString;
         CurrentSerialization = currentSnapshot.SerializationString;
+        
+        SelectedSerializationType = selectedSnapshot.SerializationType;
+        CurrentSerializationType = currentSnapshot.SerializationType;
+
+        if(_snapshotMenu.SerializationType != CurrentSerializationType || _snapshotMenu.SerializationType != SelectedSerializationType)
+        {
+            UpdateSerialization(_snapshotMenu.SerializationType);
+        }
+
+        this.WhenAnyValue(x => x._snapshotMenu.SerializationType).Subscribe(newSerializationType =>
+        {
+            UpdateSerialization(newSerializationType);
+        }).DisposeWith(this);
+
         HasDifference = !CurrentSerialization.Equals(SelectedSerialization);
 
         if (HasDifference)
@@ -30,19 +45,6 @@ public class VM_FormContextSnapshot : VM
         {
             BorderColor = new(Colors.White);
         }
-
-        SelectedSerializationType = selectedSnapshot.SerializationType;
-        CurrentSerializationType = currentSnapshot.SerializationType;
-
-        if(snapshotMenu.SerializationType != CurrentSerializationType || snapshotMenu.SerializationType != SelectedSerializationType)
-        {
-            UpdateSerialization(snapshotMenu.SerializationType);
-        }
-
-        this.WhenAnyValue(x => snapshotMenu.SerializationType).Subscribe(newSerializationType =>
-        {
-            UpdateSerialization(newSerializationType);
-        }).DisposeWith(this);
     }
 
     public ModKey ContextModKey { get; set; }
@@ -53,6 +55,7 @@ public class VM_FormContextSnapshot : VM
     public SerializationType CurrentSerializationType { get; set; }
     public SolidColorBrush BorderColor { get; set; }
     private readonly SerializationSwitcher _serializationSwitcher;
+    private readonly VM_SnapshotMenu _snapshotMenu;
 
     public void UpdateSerialization(SerializationType newSerializationType)
     {

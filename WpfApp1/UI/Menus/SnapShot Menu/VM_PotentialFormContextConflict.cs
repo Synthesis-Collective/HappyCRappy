@@ -16,11 +16,17 @@ public class VM_PotentialFormContextConflict : VM
     public VM_PotentialFormContextConflict(KeyValuePair<ModKey, string> serialization1, KeyValuePair<ModKey, string> serialization2, SerializationType serializationType, SerializationSwitcher serializationSwitcher, VM_SnapshotMenu snapshotMenu)
     {
         _serializationSwitcher = serializationSwitcher;
+        _snapshotMenu = snapshotMenu;
 
         Serialization1 = serialization1.Value;
         Serialization2 = serialization2.Value;
         ModName1 = serialization1.Key.FileName;
         ModName2 = serialization2.Key.FileName;
+
+        this.WhenAnyValue(x => x._snapshotMenu.SerializationType).Subscribe(newSerializationType =>
+        {
+            UpdateSerialization(newSerializationType);
+        }).DisposeWith(this);
 
         HasDifference = !Serialization1.Equals(Serialization2);
 
@@ -38,15 +44,10 @@ public class VM_PotentialFormContextConflict : VM
         SerializationType1 = serializationType;
         SerializationType2 = serializationType;
 
-        if (snapshotMenu.SerializationType != SerializationType1 || snapshotMenu.SerializationType != SerializationType2)
+        if (_snapshotMenu.SerializationType != SerializationType1 || _snapshotMenu.SerializationType != SerializationType2)
         {
-            UpdateSerialization(snapshotMenu.SerializationType);
+            UpdateSerialization(_snapshotMenu.SerializationType);
         }
-
-        this.WhenAnyValue(x => snapshotMenu.SerializationType).Subscribe(newSerializationType =>
-        {
-            UpdateSerialization(newSerializationType);
-        }).DisposeWith(this);
     }
 
     public bool HasDifference { get; set; } = false;
@@ -59,6 +60,7 @@ public class VM_PotentialFormContextConflict : VM
     public SerializationType SerializationType1 { get; set; }
     public SerializationType SerializationType2 { get; set; }
     private readonly SerializationSwitcher _serializationSwitcher;
+    private readonly VM_SnapshotMenu _snapshotMenu;
 
     public void UpdateSerialization(SerializationType newSerializationType)
     {
