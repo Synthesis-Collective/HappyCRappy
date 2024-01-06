@@ -15,4 +15,5 @@ public interface ISnapshotDisplayNode
     public string DisplayString { get; set; }
     public bool HasDifference { get; set; }
     public SolidColorBrush BorderColor { get; set; }
+    public bool VisibleChildOrSelf { get; set; }
 }

@@ -36,11 +36,12 @@
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
                         <!-- I don't like overriding this because white is the default TreeView styrling, but with the other manually specified styling it changes to black -->
                     </Style.Resources>
-                    <!--
+                    
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding VisibleChildOrSelfConfigVM}" Value="false">
+                        <DataTrigger Binding="{Binding VisibleChildOrSelf}" Value="false">
                             <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
+                        <!--
                         <DataTrigger Binding="{Binding VisibleSelfConfigVM}" Value="false">
                             <Setter Property="Foreground" Value="Gray"/>
                         </DataTrigger>
@@ -49,8 +50,8 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding HasSearchStringConfigVM}" Value="true">
                             <Setter Property="IsExpanded" Value="True"/>
-                        </DataTrigger>
-                    </Style.Triggers> -->
+                        </DataTrigger> -->
+                    </Style.Triggers>
                 </Style>
             </local:ExtendedTreeView.Resources>
 

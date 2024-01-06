@@ -9,15 +9,17 @@ using Mutagen.Bethesda.Plugins.Aspects;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
 using System.Windows.Media;
+using ReactiveUI;
 
 namespace HappyCRappy;
 
 public class VM_FormSnapshot : VM, ISnapshotDisplayNode
 {
     public delegate VM_FormSnapshot Factory(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot);
-    public VM_FormSnapshot(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot, IEnvironmentStateProvider environmentStateProvider, VM_FormContextSnapshot.Factory contextSnapshotFactory)
+    public VM_FormSnapshot(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot, IEnvironmentStateProvider environmentStateProvider, VM_FormContextSnapshot.Factory contextSnapshotFactory, VM_SnapshotMenu snapshotMenu)
     {
         _environmentStateProvider = environmentStateProvider;
+        _snapshotMenu = snapshotMenu;
         _formKey = selectedSnapshot.FormKey;
         GetDisplayString();
 
@@ -47,6 +49,10 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
         {
             BorderColor = new(Colors.White);
         }
+
+        UpdateVisibility();
+
+        this.WhenAnyValue(x => x._snapshotMenu.ShowOnlyConflicts).Subscribe(_ => UpdateVisibility()).DisposeWith(this);
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Record;
@@ -59,7 +65,22 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
     public bool HasDifference { get; set; } = false;
     public SolidColorBrush BorderColor { get; set; }
     private readonly IEnvironmentStateProvider _environmentStateProvider;
+    private readonly VM_SnapshotMenu _snapshotMenu;
     private readonly FormKey _formKey;
+    public bool VisibleChildOrSelf { get; set; }
+
+    private void UpdateVisibility()
+    {
+        if (!_snapshotMenu.ShowOnlyConflicts || HasDifference)
+        {
+            VisibleChildOrSelf = true;
+        }
+        else
+        {
+            VisibleChildOrSelf = false;
+        }
+    }
+
     public void GetDisplayString()
     {
         string name = string.Empty;

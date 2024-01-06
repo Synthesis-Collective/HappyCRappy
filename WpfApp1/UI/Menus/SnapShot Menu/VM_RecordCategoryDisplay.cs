@@ -15,8 +15,10 @@ namespace HappyCRappy;
 public class VM_RecordCategoryDisplay : VM, ISnapshotDisplayNode
 {
     public delegate VM_RecordCategoryDisplay Factory(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, List<PotentialConflictFinder.PotentialConflictRecord> potentialConflicts);
-    public VM_RecordCategoryDisplay(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, List<PotentialConflictFinder.PotentialConflictRecord> potentialConflicts, VM_FormSnapshot.Factory formSnapshotFactory, VM_PotentialFormConflict.Factory potentialConflictFactory)
+    public VM_RecordCategoryDisplay(string recordType, List<(FormSnapshot, FormSnapshot)> snapshots, List<PotentialConflictFinder.PotentialConflictRecord> potentialConflicts, VM_FormSnapshot.Factory formSnapshotFactory, VM_PotentialFormConflict.Factory potentialConflictFactory, VM_SnapshotMenu snapshotMenu)
     {
+        _snapshotMenu = snapshotMenu;
+
         DisplayString = recordType;
 
         foreach (var snapshot in snapshots)
@@ -41,6 +43,10 @@ public class VM_RecordCategoryDisplay : VM, ISnapshotDisplayNode
         {
             BorderColor = new(Colors.White);
         }
+
+        UpdateVisibility();
+
+        this.WhenAnyValue(x => x._snapshotMenu.ShowOnlyConflicts).Subscribe(_ => UpdateVisibility()).DisposeWith(this);
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Category;
@@ -48,4 +54,18 @@ public class VM_RecordCategoryDisplay : VM, ISnapshotDisplayNode
     public string DisplayString { get; set; } = string.Empty;
     public bool HasDifference { get; set; } = false;
     public SolidColorBrush BorderColor { get; set; }
+    public bool VisibleChildOrSelf { get; set; }
+    private readonly VM_SnapshotMenu _snapshotMenu;
+
+    private void UpdateVisibility()
+    {
+        if (!_snapshotMenu.ShowOnlyConflicts || HasDifference)
+        {
+            VisibleChildOrSelf = true;
+        }
+        else
+        {
+            VisibleChildOrSelf = false;
+        }
+    }
 }

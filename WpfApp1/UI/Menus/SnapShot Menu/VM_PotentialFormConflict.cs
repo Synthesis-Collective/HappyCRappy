@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Plugins.Aspects;
+using ReactiveUI;
+using Noggog;
 
 namespace HappyCRappy;
 
@@ -16,6 +18,7 @@ public class VM_PotentialFormConflict: VM, ISnapshotDisplayNode
     public VM_PotentialFormConflict(PotentialConflictFinder.PotentialConflictRecord data, IEnvironmentStateProvider environmentStateProvider, VM_SnapshotMenu snapshotMenu, VM_PotentialFormContextConflict.Factory contextConflictFactory)
     {
         _environmentStateProvider = environmentStateProvider;
+        _snapshotMenu = snapshotMenu;
         _formKey = data.RecordFormKey;
         GetDisplayString();
 
@@ -24,9 +27,13 @@ public class VM_PotentialFormConflict: VM, ISnapshotDisplayNode
         {
             for (int j = i + 1; j < dataList.Count; j++)
             {
-                ContextPairingVMs.Add(contextConflictFactory(dataList[i], dataList[j], snapshotMenu.SerializationType));
+                ContextPairingVMs.Add(contextConflictFactory(dataList[i], dataList[j], _snapshotMenu.SerializationType));
             }
         }
+
+        UpdateVisibility();
+
+        this.WhenAnyValue(x => x._snapshotMenu.ShowOnlyConflicts).Subscribe(_ => UpdateVisibility()).DisposeWith(this);
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Record;
@@ -38,6 +45,20 @@ public class VM_PotentialFormConflict: VM, ISnapshotDisplayNode
     public VM_PotentialFormContextConflict? SelectedContextPairVM { get; set; }
     private readonly IEnvironmentStateProvider _environmentStateProvider;
     private FormKey _formKey { get; set; }
+    public bool VisibleChildOrSelf { get; set; }
+    private readonly VM_SnapshotMenu _snapshotMenu;
+
+    private void UpdateVisibility()
+    {
+        if (!_snapshotMenu.ShowOnlyConflicts || HasDifference)
+        {
+            VisibleChildOrSelf = true;
+        }
+        else
+        {
+            VisibleChildOrSelf = false;
+        }
+    }
 
     public void GetDisplayString()
     {
