@@ -18,11 +18,13 @@ public class SnapShotter
     private readonly SettingsProvider _settingsProvider;
     private readonly IEnvironmentStateProvider _environmentStateProvider;
     private readonly Serializer _serializer;
-    public SnapShotter(SettingsProvider settingsProvider, IEnvironmentStateProvider environmentStateProvider, Serializer serializer)
+    private readonly RecordUtils _recordUtils;
+    public SnapShotter(SettingsProvider settingsProvider, IEnvironmentStateProvider environmentStateProvider, Serializer serializer, RecordUtils recordUtils)
     {
         _settingsProvider = settingsProvider;
         _environmentStateProvider = environmentStateProvider;
         _serializer = serializer;
+        _recordUtils = recordUtils;
     }
 
     public void SaveSnapshots(ModKey[] modKeys, SerializationType serializationType)
@@ -56,7 +58,7 @@ public class SnapShotter
 
     public ModSnapshot TakeSnapShot(ModKey targetModKey, SerializationType serializationFormat, DateTime now)
     {
-        var records = GetModRecords(targetModKey);
+        var records = _recordUtils.GetModRecords(targetModKey);
         if (records == null)
         {
             throw new Exception("Mod " + targetModKey.ToString() + " does not exist");
@@ -97,23 +99,5 @@ public class SnapShotter
         }
 
         return modSnapshot;
-    }
-
-    public IMajorRecordGetter[]? GetModRecords(ModKey modKey)
-    {
-        var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(modKey);
-        if (modListing == null)
-        {
-            MessageBox.Show("Could not find mod " + modKey.ToString() + " in current load order", "Error");
-            return null;
-        }
-
-        var records = modListing?.Mod?.EnumerateMajorRecords().ToArray();
-        if (records == null)
-        {
-            throw new Exception("Records are null");
-        }
-
-        return records;
     }
 }

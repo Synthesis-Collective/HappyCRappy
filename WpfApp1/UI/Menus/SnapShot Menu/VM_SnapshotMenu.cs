@@ -104,7 +104,7 @@ public class VM_SnapshotMenu : VM
             var potentialConflicts = new Dictionary<string, List<PotentialConflictFinder.PotentialConflictRecord>>();
             if(ShowPotentialConflicts)
             {
-                potentialConflicts = _conflictFinder.FindConflicts(SelectedSnapshotMod.Value, GetAllRootFormKeys(new List<ModSnapshot>() { currentSnapshot, snapshot}), SerializationType);
+                potentialConflicts = _conflictFinder.FindConflicts(SelectedSnapshotMod.Value, GetAllRootFormKeys(new List<ModSnapshot>() { currentSnapshot, snapshot}), SerializationType, SettingsVM.HandleRemappedFormTypes);
             }
 
             DisplayedSnapshot = _snapshotVMFactory(snapshot, currentSnapshot, potentialConflicts);

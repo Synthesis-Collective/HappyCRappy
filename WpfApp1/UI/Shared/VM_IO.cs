@@ -11,11 +11,13 @@ public class VM_IO
     private readonly SettingsProvider _settingsProvider;
     private readonly VM_SettingsMenu _settingsMenu;
     private readonly VM_SnapshotMenu _snapshotMenu;
-    public VM_IO(SettingsProvider settingsProvider, VM_SettingsMenu settingsMenu, VM_SnapshotMenu snapshotMenu)
+    private readonly LinkCacheWarmer _linkCacheWarmer;
+    public VM_IO(SettingsProvider settingsProvider, VM_SettingsMenu settingsMenu, VM_SnapshotMenu snapshotMenu, LinkCacheWarmer linkCacheWarmer)
     {
         _settingsProvider = settingsProvider;
         _settingsMenu = settingsMenu;
         _snapshotMenu = snapshotMenu;
+        _linkCacheWarmer = linkCacheWarmer; 
     }
 
     public void CopyInViewModels()
@@ -23,6 +25,16 @@ public class VM_IO
         _settingsProvider.LoadSettings();
         _settingsMenu.ReadFromModel(_settingsProvider.Settings);
         _snapshotMenu.ReadFromModel(_settingsProvider.Settings);
+
+        if (_settingsMenu.WarmUpLinkCacheOnStartup)
+        {
+            Task.Run(async () =>
+            {
+                await _linkCacheWarmer.WarmUpLinkCache();
+            });
+        }
+
+        _linkCacheWarmer.InitializeSubscriptions();
     }
 
     public void DumpViewModels()

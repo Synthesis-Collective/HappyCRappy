@@ -19,4 +19,7 @@ public class HappyCrappySettings
     public SerializationType SerializationViewDisplay { get; set; } = SerializationType.JSON;
     public bool ShowOnlyConflicts { get; set; } = true;
     public bool ShowPotentialConflicts { get; set; } = true;
+    public bool HandleRemappedFormTypes { get; set; } = true;
+    public bool WarmUpLinkCacheOnStartup { get; set; } = true;
+    public bool UseDeepCacheing { get; set; } = true;
 }

@@ -40,6 +40,9 @@ public class VM_SettingsMenu : VM
     public string SnapshotPath { get; set; } = string.Empty;
     public SerializationType SerializationFormat { get; set; } = SerializationType.JSON;
     public RelayCommand SetSnapshotPath { get; }
+    public bool HandleRemappedFormTypes { get; set; } = true;
+    public bool WarmUpLinkCacheOnStartup { get; set; } = true;
+    public bool UseDeepCacheing { get; set; } = true;
     public void ReadFromModel(HappyCrappySettings model)
     {
         TrackedModKeys = new(model.TrackedModKeys);
@@ -58,6 +61,10 @@ public class VM_SettingsMenu : VM
             standaloneEnvironment.GameType = model.GameType;
             standaloneEnvironment.DataFolderPath = model.DataFolderPath;
         }
+
+        UseDeepCacheing = model.UseDeepCacheing;
+        HandleRemappedFormTypes = model.HandleRemappedFormTypes;
+        WarmUpLinkCacheOnStartup = model.WarmUpLinkCacheOnStartup;
     }
 
     public HappyCrappySettings DumpToModel()
@@ -68,7 +75,10 @@ public class VM_SettingsMenu : VM
             DataFolderPath = EnvironmentStateProvider.DataFolderPath,
             TrackedModKeys = TrackedModKeys.ToList(),
             SnapshotPath = SnapshotPath,
-            SerializationSaveFormat = SerializationFormat
+            SerializationSaveFormat = SerializationFormat,
+            UseDeepCacheing = UseDeepCacheing,
+            HandleRemappedFormTypes = HandleRemappedFormTypes,
+            WarmUpLinkCacheOnStartup = WarmUpLinkCacheOnStartup
         };
         return model;
     }

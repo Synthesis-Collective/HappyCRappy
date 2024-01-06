@@ -29,5 +29,9 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<PotentialConflictFinder>().AsSelf().SingleInstance();
         builder.RegisterType<Serializer>().AsSelf().SingleInstance();
         builder.RegisterType<SerializationSwitcher>().AsSelf().SingleInstance();
+        builder.RegisterType<LinkCacheWarmer>().AsSelf().SingleInstance();
+        builder.RegisterType<RecordUtils>().AsSelf().SingleInstance();
+
+        builder.RegisterType<ModRecordListing>().AsSelf();
     }
 }

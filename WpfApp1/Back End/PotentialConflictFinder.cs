@@ -18,51 +18,23 @@ public class PotentialConflictFinder
     private readonly IEnvironmentStateProvider _environmentStateProvider;
     private readonly SnapShotter _snapShotter;
     private readonly Serializer _serializer;
-    public PotentialConflictFinder(IEnvironmentStateProvider environmentStateProvider, SnapShotter snapShotter, Serializer serializer)
+    private readonly RecordUtils _recordUtils;
+    public PotentialConflictFinder(IEnvironmentStateProvider environmentStateProvider, SnapShotter snapShotter, Serializer serializer, RecordUtils recordUtils)
     {
         _environmentStateProvider = environmentStateProvider;
         _snapShotter = snapShotter;
         _serializer = serializer;
+        _recordUtils = recordUtils;
     }
 
-    public Dictionary<string, List<PotentialConflictRecord>> FindConflicts(ModKey crModKey, List<FormKey> toIgnore, SerializationType serializationType)
+    public Dictionary<string, List<PotentialConflictRecord>> FindConflicts(ModKey crModKey, List<FormKey> toIgnore, SerializationType serializationType, bool handleRemappedFormKeyTypes)
     {
         var potentialConflicts = new Dictionary<string, List<PotentialConflictRecord>>();
 
-        var crRecords = _snapShotter.GetModRecords(crModKey);
-        if (crRecords == null)
-        {
-            throw new Exception("Mod " + crModKey.ToString() + " does not exist");
-        }
+        List<ModKey> overriddenMods = new();
+        List<ModKey> overriddenModMasters = new();
 
-        List<ModKey> overrideMods = new();
-        List<ModKey> overrideMasters = new();
-
-        foreach (var record in crRecords)
-        {
-            var registration = LoquiRegistration.StaticRegister.GetRegister(record.GetType());
-            if (registration != null)
-            {
-                var contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(record.FormKey, registration.GetterType).ToList() ?? new();
-                foreach (var context in contexts)
-                {
-                    if (context.ModKey.Equals(crModKey))
-                    {
-                        continue;
-                    }
-
-                    if (!overrideMods.Contains(context.ModKey))
-                    {
-                        overrideMods.Add(context.ModKey);
-                        var masters = GetMasterRecords(context.ModKey);
-                        if (masters != null)
-                        {
-                            overrideMasters.AddRange(masters.Where(x => !overrideMasters.Contains(x)));
-                        }
-                    }
-                }
-            }
-        }
+        (overriddenMods, overriddenModMasters) = _recordUtils.GetModOverriddenRecords(crModKey);
 
         //overrideMods.RemoveWhere(x => overrideMasters.Contains(x)); // get rid of masters as they should be inherited by the mods mastered to them, and they will provide unnecessary clutter.
 
@@ -70,10 +42,20 @@ public class PotentialConflictFinder
         Dictionary<FormKey, List<ModKey>> allFormModPairs = new(); // used only to check if a given formkey has been reassigned to a different record type (in which case it'll be missed by Mutagen's non-generic context lookup)
         Dictionary<FormKey, ILoquiRegistration?> formRegistrations = new();
 
-        // get all formkeys from all masters of the CR mod
-        foreach (var mod in overrideMods)
+        List<ModKey> modKeysToSearch = new();
+        if (handleRemappedFormKeyTypes)
         {
-            var masterRecords = _snapShotter.GetModRecords(mod);
+            modKeysToSearch = overriddenMods;
+        }
+        else
+        {
+            modKeysToSearch = overriddenMods.Where(x => !overriddenModMasters.Contains(x)).ToList();
+        }
+
+        // get all formkeys from all masters of the CR mod
+        foreach (var mod in modKeysToSearch)
+        {
+            var masterRecords = _recordUtils.GetModRecords(mod);
             if (masterRecords == null) { continue; }
 
             foreach (var record in masterRecords)
@@ -97,7 +79,7 @@ public class PotentialConflictFinder
                     formRegistrations.Add(record.FormKey, LoquiRegistration.StaticRegister.GetRegister(record.GetType()));
                 }
 
-                if (!overrideMasters.Contains(mod))
+                if (!overriddenModMasters.Contains(mod))
                 {
                     if (focusedFormModPairs.ContainsKey(record.FormKey))
                     {
@@ -168,17 +150,7 @@ public class PotentialConflictFinder
         return potentialConflicts;
     }
 
-    private List<ModKey>? GetMasterRecords(ModKey modKey)
-    {
-        var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(modKey);
-        if (modListing == null || modListing.Mod == null)
-        {
-            System.Windows.MessageBox.Show("Could not find mod " + modKey.ToString() + " in current load order", "Error");
-            return null;
-        }
 
-        return modListing.Mod.MasterReferences.Select(x => x.Master).ToList();
-    }
 
     public class PotentialConflictRecord
     {
