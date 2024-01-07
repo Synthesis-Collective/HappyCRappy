@@ -7,6 +7,11 @@
              d:DataContext="{d:DesignInstance Type=local:VM_ModDisplay}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -72,6 +77,29 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </local:ExtendedTreeView>
+
+        <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Visibility="{Binding ShowStats, Converter={StaticResource BoolToVis}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" Text="{Binding NumNonConflict}" Margin="5 0 0 0"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Foreground="White" Text="{Binding NonConflictStr}"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Foreground="Red" Text="{Binding NumConflict}" Margin="5 0 0 0"/>
+            <TextBlock Grid.Row="1" Grid.Column="2" Foreground="Red" Text="{Binding ConflictStr}"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Foreground="MediumPurple" Text="{Binding NumPotentialConflict}" Margin="5 0 0 0" Visibility="{Binding ShowPotentialConflictCount, Converter={StaticResource BoolToVis}}"/>
+            <TextBlock Grid.Row="2" Grid.Column="2" Foreground="MediumPurple" Text="{Binding PotentialConflictStr}" Visibility="{Binding ShowPotentialConflictCount, Converter={StaticResource BoolToVis}}"/>
+        </Grid>
 
         <ScrollViewer Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3">
             <ContentPresenter Content="{Binding SelectedNode}" Name="SubgroupPresenter">
