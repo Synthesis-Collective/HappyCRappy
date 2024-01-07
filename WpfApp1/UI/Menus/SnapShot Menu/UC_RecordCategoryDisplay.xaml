@@ -1,0 +1,43 @@
+<UserControl x:Class="HappyCRappy.UC_RecordCategoryDisplay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=local:VM_RecordCategoryDisplay}"
+             xmlns:local="clr-namespace:HappyCRappy"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+            <Run Text="Records of Type: "/>
+            <Run Text="{Binding DisplayString}" />
+        </TextBlock>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Foreground="White" Text="{Binding NumNonConflict}" Margin="5 0 0 0"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Foreground="White" Text="{Binding NonConflictStr}"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Foreground="Red" Text="{Binding NumConflict}" Margin="5 0 0 0"/>
+        <TextBlock Grid.Row="2" Grid.Column="2" Foreground="Red" Text="{Binding ConflictStr}"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Foreground="MediumPurple" Text="{Binding NumPotentialConflict}" Margin="5 0 0 0" Visibility="{Binding ShowPotentialConflictCount, Converter={StaticResource BoolToVis}}"/>
+        <TextBlock Grid.Row="3" Grid.Column="2" Foreground="MediumPurple" Text="{Binding PotentialConflictStr}" Visibility="{Binding ShowPotentialConflictCount, Converter={StaticResource BoolToVis}}"/>
+    </Grid>
+</UserControl>

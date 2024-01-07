@@ -33,14 +33,14 @@ public class VM_PotentialFormConflict: VM, ISnapshotDisplayNode
 
         UpdateVisibility();
 
-        this.WhenAnyValue(x => x._snapshotMenu.ShowOnlyConflicts).Subscribe(_ => UpdateVisibility()).DisposeWith(this);
+        this.WhenAnyValue(x => x._snapshotMenu.ShowPotentialConflicts).Subscribe(_ => UpdateVisibility()).DisposeWith(this);
     }
 
     public SnapshotDisplayNodeType NodeType { get; set; } = SnapshotDisplayNodeType.Record;
     public ObservableCollection<ISnapshotDisplayNode> SubNodes { get; set; } = new();
     public string DisplayString { get; set; } = string.Empty;
     public bool HasDifference { get; set; } = true;
-    public SolidColorBrush BorderColor { get; set; } = new(Colors.Purple);
+    public SolidColorBrush BorderColor { get; set; } = new(Colors.MediumPurple);
     public ObservableCollection<VM_PotentialFormContextConflict> ContextPairingVMs { get; set; } = new();
     public VM_PotentialFormContextConflict? SelectedContextPairVM { get; set; }
     private readonly IEnvironmentStateProvider _environmentStateProvider;
@@ -50,7 +50,7 @@ public class VM_PotentialFormConflict: VM, ISnapshotDisplayNode
 
     private void UpdateVisibility()
     {
-        if (!_snapshotMenu.ShowOnlyConflicts || HasDifference)
+        if (_snapshotMenu.ShowPotentialConflicts)
         {
             VisibleChildOrSelf = true;
         }
