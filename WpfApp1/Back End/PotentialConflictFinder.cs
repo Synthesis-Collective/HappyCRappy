@@ -111,9 +111,9 @@ public class PotentialConflictFinder
 
             var contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(formKey, registration.GetterType).ToList() ?? new();
 
-            if (contexts.Count != allFormModPairs[formKey].Count)
+            if (contexts.Count != allFormModPairs[formKey].Count && handleRemappedFormKeyTypes)
             {
-                throw new Exception("Not all forms could be resolved. FormID may have been reused for a different record type");
+                contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(formKey).ToList() ?? new();
             }
 
             foreach (var modKey in focusedFormModPairs[formKey])
