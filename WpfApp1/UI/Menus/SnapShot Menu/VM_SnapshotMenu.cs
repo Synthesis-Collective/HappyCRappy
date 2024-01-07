@@ -56,6 +56,17 @@ public class VM_SnapshotMenu : VM
             }).DisposeWith(this);
 
         this.WhenAnyValue(x => x.SettingsVM.SnapshotPath).Subscribe(_ => RefreshAvailableSnapshotDates()).DisposeWith(this);
+
+        this.WhenAnyValue(x => x.ShowPotentialConflicts)
+            .Subscribe(show =>
+            {
+                if (show && DisplayedSnapshot != null)
+                {
+                    // refresh to re-compute potential conflicts
+                    DisplayedSnapshot = null;
+                    LoadSnapshot();
+                }
+            }).DisposeWith(this);
     }
 
     public RelayCommand TakeSnapShot { get; }
