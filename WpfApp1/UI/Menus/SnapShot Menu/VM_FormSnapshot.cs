@@ -16,11 +16,13 @@ namespace HappyCRappy;
 public class VM_FormSnapshot : VM, ISnapshotDisplayNode
 {
     public delegate VM_FormSnapshot Factory(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot);
-    public VM_FormSnapshot(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot, IEnvironmentStateProvider environmentStateProvider, VM_FormContextSnapshot.Factory contextSnapshotFactory, VM_SnapshotMenu snapshotMenu)
+    public VM_FormSnapshot(FormSnapshot selectedSnapshot, FormSnapshot currentSnapshot, IEnvironmentStateProvider environmentStateProvider, VM_FormContextSnapshot.Factory contextSnapshotFactory, VM_SnapshotMenu snapshotMenu, RecordUtils recordUtils)
     {
         _environmentStateProvider = environmentStateProvider;
+        _recordUtils = recordUtils;
         _snapshotMenu = snapshotMenu;
         _formKey = selectedSnapshot.FormKey;
+        _formType = selectedSnapshot.FormType;
         GetDisplayString();
 
         var contextMods = selectedSnapshot.ContextSnapshots.Select(x => x.SourceModKey)
@@ -66,7 +68,9 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
     public SolidColorBrush BorderColor { get; set; }
     private readonly IEnvironmentStateProvider _environmentStateProvider;
     private readonly VM_SnapshotMenu _snapshotMenu;
+    private readonly RecordUtils _recordUtils;
     private readonly FormKey _formKey;
+    private readonly Type? _formType;
     public bool VisibleChildOrSelf { get; set; }
 
     private void UpdateVisibility()
@@ -85,7 +89,8 @@ public class VM_FormSnapshot : VM, ISnapshotDisplayNode
     {
         string name = string.Empty;
         string edid = string.Empty;
-        if(_environmentStateProvider != null && _environmentStateProvider.LinkCache != null && _environmentStateProvider.LinkCache.TryResolve(_formKey, out var record))
+
+        if (_recordUtils.TryResolveTypedWithGenericFallback(_formKey, _formType, out var record) && record != null)
         {
             if(record is INamedGetter named && named.Name != null)
             {

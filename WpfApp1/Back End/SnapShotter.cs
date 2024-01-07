@@ -72,7 +72,8 @@ public class SnapShotter
         {
             var formSnapShot = new FormSnapshot();
             formSnapShot.FormKey = record.FormKey;
-            var registration = LoquiRegistration.StaticRegister.GetRegister(record.GetType());
+            formSnapShot.FormType = record.GetType();
+            var registration = LoquiRegistration.StaticRegister.GetRegister(formSnapShot.FormType);
             var contexts = _environmentStateProvider.LinkCache?.ResolveAllContexts(record.FormKey, registration.GetterType).ToList() ?? new();
             contexts.Reverse();
             formSnapShot.OverrideOrder = contexts.Select(x => x.ModKey).ToList();

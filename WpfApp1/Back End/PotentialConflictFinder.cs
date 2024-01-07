@@ -134,7 +134,7 @@ public class PotentialConflictFinder
             // store conflict if needed
             if (serializationGroups.Length > 1)
             {
-                var conflictEntry = new PotentialConflictRecord(serializations, formKey, serializationType);
+                var conflictEntry = new PotentialConflictRecord(serializations, formKey, registration.GetterType, serializationType);
                 if(potentialConflicts.ContainsKey(conflictEntry.RecordType))
                 {
                     potentialConflicts[conflictEntry.RecordType].Add(conflictEntry);
@@ -146,7 +146,6 @@ public class PotentialConflictFinder
             }
         }
 
-
         return potentialConflicts;
     }
 
@@ -154,7 +153,7 @@ public class PotentialConflictFinder
 
     public class PotentialConflictRecord
     {
-        public PotentialConflictRecord(Dictionary<ModKey, (string, string)> elements, FormKey recordFormKey, SerializationType serializationType)
+        public PotentialConflictRecord(Dictionary<ModKey, (string, string)> elements, FormKey recordFormKey, Type recordFormType, SerializationType serializationType)
         {
             foreach (var  kvp in elements)
             {
@@ -165,6 +164,10 @@ public class PotentialConflictFinder
                 }
             }
             RecordFormKey = recordFormKey;
+            if (recordFormType != null)
+            {
+                RecordFormType = recordFormType;
+            }
             SerializationType = serializationType;
         }
 
@@ -172,5 +175,6 @@ public class PotentialConflictFinder
         public string RecordType { get; set; } = string.Empty; 
         public SerializationType SerializationType { get; set; }
         public FormKey RecordFormKey { get; set; }
+        public Type? RecordFormType { get; set; }
     }
 }

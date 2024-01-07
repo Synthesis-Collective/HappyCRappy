@@ -122,4 +122,29 @@ public class RecordUtils
             _environmentStateProvider.LinkCache.ResolveAllContexts(record.FormKey, registration.GetterType);
         }
     }
+
+    public bool TryResolveTypedWithGenericFallback(FormKey formKey, Type? formType, out IMajorRecordGetter? record)
+    {
+        if (_environmentStateProvider == null || _environmentStateProvider.LinkCache == null)
+        {
+            record = null;
+            return false;
+        }
+
+        if (formType != null)
+        {
+            var registration = LoquiRegistration.StaticRegister.GetRegister(formType);
+            if (registration != null && _environmentStateProvider.LinkCache.TryResolve(formKey, registration.GetterType, out record))
+            {
+                return true;
+            }
+        }
+
+        if (_environmentStateProvider.LinkCache.TryResolve(formKey, out record))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
