@@ -73,7 +73,7 @@ public class VM_RecordCategoryDisplay : VM, ISnapshotDisplayNode
             PotentialConflictStr = "records which are not members of the displayed Conflict Resolution mod, but which may need Conflict Resolution";
         }
 
-        NumConflict = SubNodes.Count - NumConflict - NumPotentialConflict;
+        NumConflict = SubNodes.Count - NumNonConflict - NumPotentialConflict;
         if (NumConflict == 1)
         {
             ConflictStr = "record with differences from Snapshot";
