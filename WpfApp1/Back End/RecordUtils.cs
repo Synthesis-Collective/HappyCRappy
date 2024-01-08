@@ -26,6 +26,10 @@ public class RecordUtils
 
     public IMajorRecordGetter[]? GetModRecords(ModKey modKey)
     {
+        if (_environmentStateProvider.LoadOrder == null || !_environmentStateProvider.LoadOrder.Where(x => x.Key.Equals(modKey)).Any())
+        {
+            return null;
+        }
         if(_settingsMenu.UseDeepCacheing)
         {
             return GetModRecordsFromDeepCache(modKey);
@@ -33,6 +37,7 @@ public class RecordUtils
         else
         {
             var modListing = _environmentStateProvider.LoadOrder?.TryGetValue(modKey);
+            var test = modListing?.Mod?.EnumerateMajorRecordSimpleContexts();
             var records = modListing?.Mod?.EnumerateMajorRecords()?.ToHashSet() ?? new();
             return records.ToArray();
         }
