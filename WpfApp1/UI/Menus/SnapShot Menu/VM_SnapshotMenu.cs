@@ -8,18 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Noggog;
 using Mutagen.Bethesda.Plugins;
+using System.Windows;
 
 namespace HappyCRappy;
 
 public class VM_SnapshotMenu : VM
 {
     private readonly SettingsProvider _settingsProvider;
+    private readonly IEnvironmentStateProvider _environmentStateProvider;
     private readonly SnapShotter _snapShotter;
     private readonly PotentialConflictFinder _conflictFinder;
     private readonly VM_ModDisplay.Factory _snapshotVMFactory;
-    public VM_SnapshotMenu(SettingsProvider settingsProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter, PotentialConflictFinder conflictFinder, VM_ModDisplay.Factory snapshotVMFactory) 
+    public VM_SnapshotMenu(SettingsProvider settingsProvider, IEnvironmentStateProvider environmentStateProvider, VM_SettingsMenu settingsVM, SnapShotter snapShotter, PotentialConflictFinder conflictFinder, VM_ModDisplay.Factory snapshotVMFactory) 
     {
         _settingsProvider = settingsProvider;
+        _environmentStateProvider = environmentStateProvider;
         SettingsVM = settingsVM;
         _snapShotter = snapShotter;
         _conflictFinder = conflictFinder;
@@ -105,6 +108,11 @@ public class VM_SnapshotMenu : VM
     {
         if (!Directory.Exists(_settingsProvider.Settings.SnapshotPath) || SelectedSnapshotMod == null)
         {
+            return;
+        }
+        else if (_environmentStateProvider.LoadOrder == null || !_environmentStateProvider.LoadOrder.Where(x => x.Key.Equals(SelectedSnapshotMod)).Any())
+        {
+            MessageBox.Show(SelectedSnapshotMod.Value.FileName + " is not in your current load order");
             return;
         }
         ModSnapshot? snapshot = _loadedSnapshots.Where(x => x.CRModKey.Equals(SelectedSnapshotMod)).FirstOrDefault();
