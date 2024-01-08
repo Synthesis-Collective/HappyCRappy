@@ -43,9 +43,12 @@ public class VM_MainWindow : VM
     public RelayCommand ShowSettingsMenu { get; }
     public RelayCommand ShowSnapShotMenu { get; }
     public object DisplayedVM { get; set; }
+    public static string _programVersion = "1.0.0";
+    public string ProgramVersion { get; set; } = _programVersion;
 
     private readonly VM_SettingsMenu _settingsVM;
     private readonly VM_SnapshotMenu _snapShotVM;
+
 
     private void OnApplicationExit(object sender, ExitEventArgs e)
     {
