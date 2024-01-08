@@ -34,6 +34,12 @@ public class SnapShotter
             throw new Exception("Link Cache is null");
         }
 
+        if (!modKeys.Any())
+        {
+            MessageBox.Show("No Conflict Resolution Patches were selected in the Settings menu");
+            return;
+        }
+
         string extension = "";
         switch (serializationType)
         {
