@@ -90,7 +90,6 @@ public class LinkCacheWarmer : VM
                 {
                     _recordUtils.ResolveAllRecordContexts(overrideMod);
                 }
-                bool debug = false;
             }
             else
             {
