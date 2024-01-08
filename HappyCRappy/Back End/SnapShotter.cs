@@ -27,7 +27,7 @@ public class SnapShotter
         _recordUtils = recordUtils;
     }
 
-    public void SaveSnapshots(ModKey[] modKeys, SerializationType serializationType)
+    public void SaveSnapshots(ModKey[] modKeys, SerializationType serializationType, string snapshotDirPath)
     {
         if (_environmentStateProvider.LinkCache == null)
         {
@@ -43,7 +43,7 @@ public class SnapShotter
 
         var now = DateTime.Now;
         string dateStr = VM_ModDisplay.ToLabelString(now);
-        string dirPath = Path.Combine(_settingsProvider.Settings.SnapshotPath, dateStr);
+        string dirPath = Path.Combine(snapshotDirPath, dateStr);
         IOFunctions.CreateDirectoryIfNeeded(dirPath, IOFunctions.PathType.Directory);
 
         foreach (var targetModKey in modKeys)
