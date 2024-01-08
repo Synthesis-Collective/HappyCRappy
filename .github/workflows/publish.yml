@@ -29,7 +29,7 @@ jobs:
       
     - name: Archive Release
       run: |
-        powershell Compress-Archive HappyCRappy/bin/Release/net7.0-windows/publish/* "HappyCRappy${{ github.event.release.tag_name }}.zip"
+        powershell Compress-Archive HappyCRappy/bin/Release/net7.0-windows/publish/* "HappyCRappy_${{ github.event.release.tag_name }}.zip"
     - name: Publish HappyCRappy to Github
       uses: svenstaro/upload-release-action@v2
       with:
