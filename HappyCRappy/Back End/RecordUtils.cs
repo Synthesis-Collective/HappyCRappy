@@ -11,7 +11,7 @@ using Loqui;
 
 namespace HappyCRappy;
 
-public class RecordUtils
+public class RecordUtils : VM
 {
     public RecordUtils(IEnvironmentStateProvider environmentStateProvider, VM_SettingsMenu settingsMenu, ModRecordListing.Factory listingFactory)
     {
