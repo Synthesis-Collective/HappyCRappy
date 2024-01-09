@@ -79,3 +79,20 @@ In addition to showing mods that have updated, Happy CRappy can also try to pred
 
 For example, let's say that Songs of Skyrim updates to give Lynly some songs as well:
 
+![image](https://github.com/Synthesis-Collective/HappyCRappy/assets/63175798/6b60a540-2b8a-41e1-8f19-cb6e50e96dd8)
+
+Lynly isn't in our current CR patch, but if you activate "Show potential conflicts", an entry for her will appear highlighted in purple. Note: "Show potential conflicts" does a lot of work in the background comparing all records in the overridden mods against their own overrides, so you will see the program hang for a few seconds as all of this is calculated.
+
+![image](https://github.com/Synthesis-Collective/HappyCRappy/assets/63175798/81917cd4-6f73-40c8-8cea-733e4c6fd338)
+
+Clicking on Lynly's entry, you will find pairwise comparisons of all non-mastered mods that contain her NPC record, as well as their differences:
+
+![image](https://github.com/Synthesis-Collective/HappyCRappy/assets/63175798/cc978399-ebd6-44d5-89b6-4c084d03eae6)
+
+**Future plans**
+
+If enough people find this app useful, I will optimize a few things that currently need to be optimized. I think I have the "Show potential conflicts" algorithm doing more work in the background than it needs to and I could probably optimize it to run faster. Likewise, having to wait for the program to unfreeze while records are loaded from disk is always an annoying experience. I don't mind it too much myself, and there's only so much UI work I can do before I get bored, but if enough people like this app I'll circle back to it. 
+
+**Acknowledgements**
+
+Huge thanks to Noggog for making this app possible by providing both the Mutagen framework and more recently the serialization API (made for Spriggit but available for me to use in this program, without which I wouldn't have been able to write this).
