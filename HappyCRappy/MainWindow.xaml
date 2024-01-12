@@ -21,6 +21,7 @@
 
         <StackPanel Grid.Row="0" Grid.Column="0">
             <RadioButton GroupName="Nav" Margin="0, 5, 0, 0" Command="{Binding ShowSnapShotMenu}" BorderBrush="Gray" BorderThickness="1" Style="{StaticResource {x:Type ToggleButton}}" HorizontalContentAlignment="Center" IsChecked="True" Content="SnapShots"/>
+            <RadioButton GroupName="Nav" Margin="0, 5, 0, 0" Command="{Binding ShowLoadOrderMenu}" BorderBrush="Gray" BorderThickness="1" Style="{StaticResource {x:Type ToggleButton}}" HorizontalContentAlignment="Center" IsChecked="False" Content="Load Order"/>
             <RadioButton GroupName="Nav" Margin="0, 5, 0, 0" Command="{Binding ShowSettingsMenu}" BorderBrush="Gray" BorderThickness="1" Style="{StaticResource {x:Type ToggleButton}}" HorizontalContentAlignment="Center" IsChecked="False" Content="Settings"/>
         </StackPanel>
         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding ProgramVersion}"/>
@@ -32,6 +33,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type local:VM_SettingsMenu}">
                     <local:UC_SettingsMenu/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:VM_LoadOrderMenu}">
+                    <local:UC_LoadOrderMenu/>
                 </DataTemplate>
             </ContentPresenter.Resources>
         </ContentPresenter>

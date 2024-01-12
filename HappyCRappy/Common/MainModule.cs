@@ -17,6 +17,7 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<StandaloneEnvironmentStateProvider>().AsImplementedInterfaces().AsSelf().SingleInstance();
         builder.RegisterType<VM_SettingsMenu>().AsSelf().SingleInstance();
         builder.RegisterType<VM_SnapshotMenu>().AsSelf().SingleInstance();
+        builder.RegisterType<VM_LoadOrderMenu>().AsSelf().SingleInstance();
 
         builder.RegisterType<VM_ModDisplay>().AsSelf();
         builder.RegisterType<VM_RecordCategoryDisplay>().AsSelf();
@@ -24,6 +25,9 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<VM_FormContextSnapshot>().AsSelf();
         builder.RegisterType<VM_PotentialFormConflict>().AsSelf();
         builder.RegisterType<VM_PotentialFormContextConflict>().AsSelf();
+        builder.RegisterType<VM_LoadOrderSnapshot>().AsSelf();
+        builder.RegisterType<VM_LoadOrderBlock>().AsSelf();
+        builder.RegisterType<VM_ModKeyWrapper>().AsSelf();
 
         builder.RegisterType<SnapShotter>().AsSelf().SingleInstance();
         builder.RegisterType<PotentialConflictFinder>().AsSelf().SingleInstance();
