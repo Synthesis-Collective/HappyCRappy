@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
              xmlns:local="clr-namespace:HappyCRappy"
              d:DataContext="{d:DesignInstance Type=local:VM_LoadOrderMenu}"
              mc:Ignorable="d" 
@@ -18,7 +19,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <local:MultiSelectionListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding LoadOrder}" SelectionMode="Extended" Background="Transparent">
+        <local:MultiSelectionListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding LoadOrder}" SelectionMode="Extended" Background="Transparent" dd:DragDrop.IsDragSource="True" dd:DragDrop.DropHandler="{Binding}">
             <local:MultiSelectionListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="1" BorderBrush="{Binding BorderColor}" Margin="0 0 0 3">
@@ -27,5 +28,7 @@
                 </DataTemplate>
             </local:MultiSelectionListBox.ItemTemplate>
         </local:MultiSelectionListBox>
+
+        <local:UC_LoadOrderSnapshot Grid.Row="0" Grid.Column="2" DataContext="{Binding SelectedSnapshot}"/>
     </Grid>
 </UserControl>

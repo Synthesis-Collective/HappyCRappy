@@ -20,6 +20,7 @@ public class VM_MainWindow : VM
         _settingsVM = settingsVM;
         _snapShotVM = snapShotVM;
         _loadOrderVM = loadOrderVM;
+        _loadOrderVM.Initialize();
 
         DisplayedVM = snapShotVM;
 

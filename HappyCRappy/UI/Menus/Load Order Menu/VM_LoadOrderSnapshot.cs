@@ -12,20 +12,32 @@ namespace HappyCRappy;
 public class VM_LoadOrderSnapshot : VM
 {
     public delegate VM_LoadOrderSnapshot Factory();
-    public VM_LoadOrderSnapshot(VM_LoadOrderMenu parentMenu)
+    public VM_LoadOrderSnapshot(VM_LoadOrderMenu parentMenu, VM_LoadOrderBlock.Factory blockFactory, VM_ModKeyWrapper.Factory modWrapperFactory)
     {
         _parentMenu = parentMenu;
+        _blockFactory = blockFactory;
+        _modWrapperFactory = modWrapperFactory;
+
+        ModChunks.Add(blockFactory());
 
         this.ModChunks.ToObservableChangeSet().Subscribe(_ => _parentMenu.RefreshAvailability()).DisposeWith(this);
     }
     private readonly VM_LoadOrderMenu _parentMenu;
-    public ObservableCollection<LoadOrderBlock> ModChunks { get; set; } = new();
+    private readonly VM_LoadOrderBlock.Factory _blockFactory;
+    private readonly VM_ModKeyWrapper.Factory _modWrapperFactory;
+    public ObservableCollection<VM_LoadOrderBlock> ModChunks { get; set; } = new();
     public DateTime DateTaken { get; set; }
     public string Version { get; set; } = VM_MainWindow._programVersion;
 
     public void CopyInFromModel(LoadOrderSnapshot model)
     {
-        ModChunks = new(model.ModChunks);
+        ModChunks.Clear();
+        foreach (var chunk in model.ModChunks)
+        {
+            var chunkVM = _blockFactory();
+            chunkVM.Mods.AddRange(chunk.Mods.Select(x => _modWrapperFactory(x)));
+            ModChunks.Add(chunkVM);
+        }
         DateTaken = model.DateTaken;
         Version = model.Version;
     }
@@ -34,7 +46,7 @@ public class VM_LoadOrderSnapshot : VM
     {
         return new()
         {
-            ModChunks = ModChunks.ToList(),
+            ModChunks = ModChunks.Select(x => x.DumpToModel()).ToList(),
             DateTaken = DateTaken,
             Version = Version
         };

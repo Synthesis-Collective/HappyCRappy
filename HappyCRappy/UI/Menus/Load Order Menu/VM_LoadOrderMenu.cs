@@ -9,17 +9,20 @@ using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using GongSolutions.Wpf.DragDrop;
 using Noggog;
 using System.Reactive.Linq;
+using System.Windows.Controls;
 
 namespace HappyCRappy;
 
 public class VM_LoadOrderMenu : VM
 {
     private readonly IEnvironmentStateProvider _environmentStateProvider;
-    public VM_LoadOrderMenu(IEnvironmentStateProvider environmentStateProvider, VM_ModKeyWrapper.Factory loadOrderEntryFactory)
+    public VM_LoadOrderMenu(IEnvironmentStateProvider environmentStateProvider, VM_ModKeyWrapper.Factory loadOrderEntryFactory, VM_LoadOrderSnapshot.Factory snapshotFactory)
     {
         _environmentStateProvider = environmentStateProvider;
+        _snapshotFactory = snapshotFactory;
 
         if (_environmentStateProvider.LoadOrder != null)
         {
@@ -39,6 +42,7 @@ public class VM_LoadOrderMenu : VM
     public ObservableCollection<VM_ModKeyWrapper> LoadOrder { get; set; } = new();
     public ObservableCollection<VM_ModKeyWrapper> SelectedMods { get; set; } = new();
     public VM_LoadOrderSnapshot? SelectedSnapshot { get; set; }
+    private VM_LoadOrderSnapshot.Factory _snapshotFactory;
 
     public void RefreshAvailability()
     {
@@ -46,6 +50,11 @@ public class VM_LoadOrderMenu : VM
         {
             mod.RefreshAvailability();
         }
+    }
+
+    public void Initialize()
+    {
+        SelectedSnapshot = _snapshotFactory();
     }
 }
 

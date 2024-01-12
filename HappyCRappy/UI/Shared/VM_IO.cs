@@ -12,11 +12,13 @@ public class VM_IO
     private readonly VM_SettingsMenu _settingsMenu;
     private readonly VM_SnapshotMenu _snapshotMenu;
     private readonly LinkCacheWarmer _linkCacheWarmer;
-    public VM_IO(SettingsProvider settingsProvider, VM_SettingsMenu settingsMenu, VM_SnapshotMenu snapshotMenu, LinkCacheWarmer linkCacheWarmer)
+    private readonly VM_LoadOrderMenu _loadOrderMenu;
+    public VM_IO(SettingsProvider settingsProvider, VM_SettingsMenu settingsMenu, VM_SnapshotMenu snapshotMenu, VM_LoadOrderMenu loadOrderMenu, LinkCacheWarmer linkCacheWarmer)
     {
         _settingsProvider = settingsProvider;
         _settingsMenu = settingsMenu;
         _snapshotMenu = snapshotMenu;
+        _loadOrderMenu = loadOrderMenu;
         _linkCacheWarmer = linkCacheWarmer; 
     }
 
