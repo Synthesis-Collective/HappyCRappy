@@ -13,16 +13,18 @@ using GongSolutions.Wpf.DragDrop;
 using Noggog;
 using System.Reactive.Linq;
 using System.Windows.Controls;
+using System.Windows;
 
 namespace HappyCRappy;
 
 public class VM_LoadOrderMenu : VM
 {
     private readonly IEnvironmentStateProvider _environmentStateProvider;
-    public VM_LoadOrderMenu(IEnvironmentStateProvider environmentStateProvider, VM_ModKeyWrapper.Factory loadOrderEntryFactory, VM_LoadOrderSnapshot.Factory snapshotFactory)
+    public VM_LoadOrderMenu(IEnvironmentStateProvider environmentStateProvider, VM_ModKeyWrapper.Factory loadOrderEntryFactory, VM_LoadOrderSnapshot.Factory snapshotFactory, VM_SettingsMenu settingsVM)
     {
         _environmentStateProvider = environmentStateProvider;
         _snapshotFactory = snapshotFactory;
+        _settingsVM = settingsVM;
 
         if (_environmentStateProvider.LoadOrder != null)
         {
@@ -40,6 +42,14 @@ public class VM_LoadOrderMenu : VM
             }
         }).DisposeWith(this);
 
+        SaveLoadOrderStashCommand = new RelayCommand(
+            canExecute: _ => true,
+            execute: _ =>
+            {
+                SaveLoadOrderStash();
+            }
+        );
+
         _initialized = true;
     }
 
@@ -48,6 +58,8 @@ public class VM_LoadOrderMenu : VM
     public VM_LoadOrderSnapshot? SelectedSnapshot { get; set; }
     private VM_LoadOrderSnapshot.Factory _snapshotFactory;
     private bool _initialized = false;
+    private readonly VM_SettingsMenu _settingsVM;
+    public RelayCommand SaveLoadOrderStashCommand { get; }
 
     public void RefreshAvailability()
     {
@@ -60,6 +72,39 @@ public class VM_LoadOrderMenu : VM
     public void Initialize()
     {
         SelectedSnapshot = _snapshotFactory();
+    }
+
+    private void SaveLoadOrderStash()
+    {
+        if (SelectedSnapshot == null)
+        {
+            MessageBox.Show("No load order stash is selected");
+            return;
+        }
+        else if (!SelectedSnapshot.ModChunks.Any() || !SelectedSnapshot.ModChunks.First().Mods.Any())
+        {
+            MessageBox.Show("No plugins are currently being managed");
+            return;
+        }
+
+        var now = DateTime.Now;
+        string dateStr = VM_ModDisplay.ToLabelString(now);
+        string dirPath = Path.Combine(_settingsVM.LoadOrderStashPath, dateStr);
+        string filePath = Path.Combine(dirPath, "LoadOrderStash.json");
+        IOFunctions.CreateDirectoryIfNeeded(dirPath, IOFunctions.PathType.Directory);
+
+        var stash = SelectedSnapshot.DumpToModel();
+        stash.DateTaken = now;
+
+        JSONhandler<LoadOrderSnapshot>.SaveJSONFile(stash, filePath, out bool success, out string exceptionStr);
+        if(success)
+        {
+            MessageBox.Show("Stashed managed plugins to " + filePath);
+        }
+        else
+        {
+            MessageBox.Show(exceptionStr);
+        }
     }
 }
 

@@ -16,10 +16,15 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <local:MultiSelectionListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding LoadOrder}" SelectionMode="Extended" Background="Transparent" dd:DragDrop.IsDragSource="True" dd:DragDrop.DropHandler="{Binding}">
+        <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+            <Button Content="Save Managed Load Order" Foreground="Green" Command="{Binding SaveLoadOrderStashCommand}"  Margin="5 0 20 0"/>
+        </WrapPanel>
+        
+        <local:MultiSelectionListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding LoadOrder}" SelectionMode="Extended" Background="Transparent" dd:DragDrop.IsDragSource="True" dd:DragDrop.DropHandler="{Binding}">
             <local:MultiSelectionListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="1" BorderBrush="{Binding BorderColor}" Margin="0 0 0 3">
@@ -29,6 +34,6 @@
             </local:MultiSelectionListBox.ItemTemplate>
         </local:MultiSelectionListBox>
 
-        <local:UC_LoadOrderSnapshot Grid.Row="0" Grid.Column="2" DataContext="{Binding SelectedSnapshot}"/>
+        <local:UC_LoadOrderSnapshot Grid.Row="1" Grid.Column="2" DataContext="{Binding SelectedSnapshot}"/>
     </Grid>
 </UserControl>
