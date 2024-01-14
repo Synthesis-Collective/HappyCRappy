@@ -170,19 +170,62 @@ public class VM_LoadOrderBlock : VM, IDropTarget
                 }
             }
         }
+        else if (dropInfo.Data is IEnumerable<object> collection)
+        {
+            foreach (var obj in collection)
+            {
+                if (obj is VM_ModKeyWrapper draggedMod && !draggedMod.IsManaged)
+                {
+                    dropInfo.Effects = DragDropEffects.Move;
+                }
+                else
+                {
+                    dropInfo.Effects = DragDropEffects.None;
+                    break;
+                }
+            }
+        }
+
     }
 
     public void Drop(IDropInfo dropInfo)
     {
+        if (dropInfo.TargetCollection == null || dropInfo.TargetCollection is not ObservableCollection<VM_ModKeyWrapper> targetCollection)
+        {
+            return;
+        }
+
         if (dropInfo.Data is VM_ModKeyWrapper)
         {
             var draggedMod = (VM_ModKeyWrapper)dropInfo.Data;
-            if (dropInfo.TargetCollection != null && !draggedMod.IsManaged)
+            if (!draggedMod.IsManaged)
             {
-                var targetCollection = dropInfo.TargetCollection as ObservableCollection<VM_ModKeyWrapper>;
                 if (targetCollection != null)
                 {
                     targetCollection.Add(draggedMod);
+                }
+            }
+        }
+        else if (dropInfo.Data is IEnumerable<object> collection)
+        {
+            List<VM_ModKeyWrapper> draggedMods = new();
+            foreach (var obj in collection)
+            {
+                if (obj is VM_ModKeyWrapper draggedMod && !draggedMod.IsManaged)
+                {
+                    draggedMods.Add(draggedMod);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (draggedMods.Count == collection.Count())
+            {
+                foreach (var mod in draggedMods)
+                {
+                    targetCollection.Add(mod);
                 }
             }
         }
