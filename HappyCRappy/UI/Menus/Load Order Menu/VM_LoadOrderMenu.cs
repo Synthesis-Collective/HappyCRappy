@@ -34,15 +34,20 @@ public class VM_LoadOrderMenu : VM
 
         this.WhenAnyValue(x => x.SelectedSnapshot).Subscribe(_ =>
         {
-            RefreshAvailability();
+            if (_initialized)
+            {
+                RefreshAvailability();
+            }
         }).DisposeWith(this);
 
+        _initialized = true;
     }
 
     public ObservableCollection<VM_ModKeyWrapper> LoadOrder { get; set; } = new();
     public ObservableCollection<VM_ModKeyWrapper> SelectedMods { get; set; } = new();
     public VM_LoadOrderSnapshot? SelectedSnapshot { get; set; }
     private VM_LoadOrderSnapshot.Factory _snapshotFactory;
+    private bool _initialized = false;
 
     public void RefreshAvailability()
     {
@@ -61,18 +66,30 @@ public class VM_LoadOrderMenu : VM
 public class VM_ModKeyWrapper : VM
 {
     public delegate VM_ModKeyWrapper Factory(ModKey modKey);
-    public VM_ModKeyWrapper(ModKey modKey)
+    public VM_ModKeyWrapper(ModKey modKey, Func<VM_LoadOrderMenu> parentMenu)
     {
         ModKey = modKey;
+        _parentMenu = parentMenu;
     }
 
     public ModKey ModKey { get; }
     public bool IsManaged { get; set; }
     public SolidColorBrush BorderColor { get; set; } = new(Colors.Green);
     public bool IsSelected { get; set; }
+    private readonly Func<VM_LoadOrderMenu> _parentMenu;
 
     public void RefreshAvailability()
     {
-
+        if (_parentMenu().SelectedSnapshot != null &&
+            _parentMenu().SelectedSnapshot.ModChunks.Where(x => x.Mods.Select(y => y.ModKey).Contains(ModKey)).Any())
+        {
+            IsManaged = true;
+            BorderColor = new(Colors.Gray);
+        }
+        else
+        {
+            IsManaged = false;
+            BorderColor = new(Colors.Green);
+        }
     }
 }

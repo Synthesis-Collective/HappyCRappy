@@ -27,7 +27,10 @@
         <ListBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Mods}" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}" MinHeight="100" BorderBrush="Aquamarine" BorderThickness="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding ModKey.FileName}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding ModKey.FileName}"/>
+                        <Button Content="X" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.RemoveSelectedMod}" CommandParameter="{Binding}" Foreground="Firebrick"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

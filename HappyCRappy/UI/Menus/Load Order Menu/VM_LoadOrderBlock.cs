@@ -10,15 +10,15 @@ using Noggog;
 using GongSolutions.Wpf.DragDrop;
 using System.Windows.Controls;
 using System.Windows;
-using Mutagen.Bethesda.Fallout4;
 
 namespace HappyCRappy;
 
 public class VM_LoadOrderBlock : VM, IDropTarget
 {
-    public delegate VM_LoadOrderBlock Factory();
-    public VM_LoadOrderBlock(VM_LoadOrderMenu parentMenu, VM_ModKeyWrapper.Factory modWrapperFactory)
+    public delegate VM_LoadOrderBlock Factory(VM_LoadOrderSnapshot parentSnapshot);
+    public VM_LoadOrderBlock(VM_LoadOrderSnapshot parentSnapshot, VM_LoadOrderMenu parentMenu, VM_ModKeyWrapper.Factory modWrapperFactory)
     {
+        _parentSnapshot = parentSnapshot;
         _parentMenu = parentMenu;
         _modWrapperFactory = modWrapperFactory;
 
@@ -26,14 +26,25 @@ public class VM_LoadOrderBlock : VM, IDropTarget
             _parentMenu.RefreshAvailability();
             RefreshPrePostMods();
             }).DisposeWith(this);
+
+        RemoveSelectedMod = new RelayCommand(
+            canExecute: _ => true,
+            execute: x =>
+            {
+                Mods.Remove((VM_ModKeyWrapper)x);
+                DeleteIfNecessary();
+            }
+        );
     }
     private readonly VM_LoadOrderMenu _parentMenu;
+    private readonly VM_LoadOrderSnapshot _parentSnapshot;
     private readonly VM_ModKeyWrapper.Factory _modWrapperFactory;
     public ObservableCollection<VM_ModKeyWrapper> Mods { get; set; } = new();
     public VM_ModKeyWrapper? PlaceAfter { get; set; }
     public ObservableCollection<VM_ModKeyWrapper> AvailablePriorMods { get; set; } = new();
     public VM_ModKeyWrapper? PlaceBefore { get; set; }
     public ObservableCollection<VM_ModKeyWrapper> AvailableSubsequentMods { get; set; } = new();
+    public RelayCommand RemoveSelectedMod { get; }
 
     public void CopyInFromModel(LoadOrderBlock model)
     {
@@ -134,9 +145,31 @@ public class VM_LoadOrderBlock : VM, IDropTarget
         }
     }
 
+    public void DeleteIfNecessary()
+    {
+        if(!Mods.Any() && _parentSnapshot.ModChunks.Count > 1)
+        {
+            _parentSnapshot.ModChunks.Remove(this);
+        }
+    }
+
     public void DragOver(IDropInfo dropInfo)
     {
-        dropInfo.Effects = DragDropEffects.Move;
+        if (dropInfo.Data is VM_ModKeyWrapper)
+        {
+            var draggedMod = (VM_ModKeyWrapper)dropInfo.Data;
+            if (draggedMod != null)
+            {
+                if(draggedMod.IsManaged)
+                {
+                    dropInfo.Effects = DragDropEffects.None;
+                }
+                else
+                {
+                    dropInfo.Effects = DragDropEffects.Move;
+                }
+            }
+        }
     }
 
     public void Drop(IDropInfo dropInfo)
@@ -144,7 +177,7 @@ public class VM_LoadOrderBlock : VM, IDropTarget
         if (dropInfo.Data is VM_ModKeyWrapper)
         {
             var draggedMod = (VM_ModKeyWrapper)dropInfo.Data;
-            if (dropInfo.TargetCollection != null)
+            if (dropInfo.TargetCollection != null && !draggedMod.IsManaged)
             {
                 var targetCollection = dropInfo.TargetCollection as ObservableCollection<VM_ModKeyWrapper>;
                 if (targetCollection != null)
