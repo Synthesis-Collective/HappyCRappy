@@ -32,6 +32,19 @@ public class VM_SettingsMenu : VM
                 }
             }
         );
+
+        LoadOrderStashPath = Path.Combine(settingsProvider.GetExePath(), "Load Order Stashes");
+
+        SetLoadOrderStashPath = new RelayCommand(
+            canExecute: _ => true,
+            execute: _ =>
+            {
+                if (IOFunctions.SelectFolder("", out string selectedPath))
+                {
+                    LoadOrderStashPath = selectedPath;
+                }
+            }
+        );
     }
 
     public IEnvironmentStateProvider EnvironmentStateProvider { get; }
@@ -40,6 +53,8 @@ public class VM_SettingsMenu : VM
     public string SnapshotPath { get; set; } = string.Empty;
     public SerializationType SerializationFormat { get; set; } = SerializationType.JSON;
     public RelayCommand SetSnapshotPath { get; }
+    public string LoadOrderStashPath { get; set; } = string.Empty;
+    public RelayCommand SetLoadOrderStashPath { get; }
     public bool HandleRemappedFormTypes { get; set; } = true;
     public bool WarmUpLinkCacheOnStartup { get; set; } = true;
     public bool UseDeepCacheing { get; set; } = true;
@@ -55,6 +70,15 @@ public class VM_SettingsMenu : VM
             SnapshotPath = Path.Combine(_settingsProvider.GetExePath(), "Snapshots");
         }
         SerializationFormat = model.SerializationSaveFormat;
+
+        if (!model.LoadOrderStashPath.IsNullOrWhitespace() && Directory.Exists(model.LoadOrderStashPath))
+        {
+            LoadOrderStashPath = model.LoadOrderStashPath;
+        }
+        else
+        {
+            LoadOrderStashPath = Path.Combine(_settingsProvider.GetExePath(), "Load Order Stashes");
+        }
 
         if (EnvironmentStateProvider is StandaloneEnvironmentStateProvider standaloneEnvironment)
         {

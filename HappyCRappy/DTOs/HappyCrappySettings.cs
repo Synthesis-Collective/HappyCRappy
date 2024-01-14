@@ -17,6 +17,7 @@ public class HappyCrappySettings
     public string SnapshotPath { get; set; } = string.Empty;
     public SerializationType SerializationSaveFormat { get; set; } = SerializationType.JSON;
     public SerializationType SerializationViewDisplay { get; set; } = SerializationType.JSON;
+    public string LoadOrderStashPath { get; set; } = string.Empty;
     public bool ShowOnlyConflicts { get; set; } = true;
     public bool ShowPotentialConflicts { get; set; } = true;
     public bool HandleRemappedFormTypes { get; set; } = true;

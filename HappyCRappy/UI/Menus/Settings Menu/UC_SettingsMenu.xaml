@@ -22,6 +22,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Border BorderBrush="{Binding EnvironmentStateProvider.EnvironmentColor}" BorderThickness="1" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
@@ -38,14 +39,20 @@
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Conflict Resolution Patches"/>
         <plugins:ModKeyMultiPicker Grid.Row="2" Grid.Column="2" ModKeys="{Binding TrackedModKeys}" SearchableMods="{Binding EnvironmentStateProvider.LoadOrder}" />
-        
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Use Deep Cacheing"/>
-        <CheckBox Grid.Row="3" Grid.Column="2" IsChecked="{Binding UseDeepCacheing}"/>
 
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Warm Up Cache On Startup"/>
-        <CheckBox Grid.Row="4" Grid.Column="2" IsChecked="{Binding WarmUpLinkCacheOnStartup}"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" ToolTip="Directory where your load order stashes will be saved to">Load Order Stash Directory</TextBlock>
+        <StackPanel Grid.Row="3" Grid.Column="2"  Orientation="Horizontal">
+            <Button VerticalAlignment="Center" Command="{Binding SetLoadOrderStashPath}" Foreground="LightGreen">Select</Button>
+            <TextBlock Background="Black" HorizontalAlignment="Left" Text="{Binding Path=LoadOrderStashPath, UpdateSourceTrigger=PropertyChanged}" Margin="5 0 5 0" VerticalAlignment="Center"/>
+        </StackPanel>
 
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="Handle Mismatched Record Types"/>
-        <CheckBox Grid.Row="5" Grid.Column="2" IsChecked="{Binding HandleRemappedFormTypes}"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Use Deep Cacheing"/>
+        <CheckBox Grid.Row="4" Grid.Column="2" IsChecked="{Binding UseDeepCacheing}"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Warm Up Cache On Startup"/>
+        <CheckBox Grid.Row="5" Grid.Column="2" IsChecked="{Binding WarmUpLinkCacheOnStartup}"/>
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Handle Mismatched Record Types"/>
+        <CheckBox Grid.Row="6" Grid.Column="2" IsChecked="{Binding HandleRemappedFormTypes}"/>
     </Grid>
 </UserControl>
