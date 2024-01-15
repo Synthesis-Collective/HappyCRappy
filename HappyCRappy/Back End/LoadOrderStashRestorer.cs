@@ -88,7 +88,14 @@ public class LoadOrderStashRestorer
         _environmentStateProvider.LinkCache?.Dispose();
         _environmentStateProvider.LoadOrder?.Dispose();
 
-        File.WriteAllLines(path, outputLines);
+        try
+        {
+            File.WriteAllLines(path, outputLines);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Failed to apply load order. Error: " + ex.Message);
+        }
     }
 
     private int ComputeChunkPosition(LoadOrderBlock block, List<ModKey> currentLoadOrder, List<string> errorMessages)

@@ -82,9 +82,7 @@ public class StandaloneEnvironmentStateProvider : VM, IEnvironmentStateProvider
 
         try
         {
-            _environment = builder
-                .TransformModListings(x =>
-                    x.OnlyEnabledAndExisting())
+            _environment = builder // don't call OnlyEnabledAndExisting() because we need to keep disabled mods for load order management
                 .Build();
 
             CreationClubListingsFilePath = _environment.CreationClubListingsFilePath ?? string.Empty;
