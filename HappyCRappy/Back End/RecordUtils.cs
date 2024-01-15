@@ -26,7 +26,7 @@ public class RecordUtils : VM
 
     public IMajorRecordGetter[]? GetModRecords(ModKey modKey)
     {
-        if (_environmentStateProvider.LoadOrder == null || !_environmentStateProvider.LoadOrder.Where(x => x.Key.Equals(modKey)).Any())
+        if (_environmentStateProvider.LoadOrder == null || !_environmentStateProvider.LoadOrder.Where(x => x.Key.Equals(modKey) && x.Value.Enabled).Any())
         {
             return null;
         }
