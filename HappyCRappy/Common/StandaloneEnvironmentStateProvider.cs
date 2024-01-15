@@ -36,7 +36,7 @@ public class StandaloneEnvironmentStateProvider : VM, IEnvironmentStateProvider
     public static SolidColorBrush ColorEnvironmentOK = new SolidColorBrush(Colors.Green);
     public static SolidColorBrush ColorEnvironmentError = new SolidColorBrush(Colors.Red);
     public string StatusText { get; set; } = string.Empty;
-
+    public int EnvironmentUpdateTrigger { get; set; } = 1;
     public StandaloneEnvironmentStateProvider()
     {
         UpdateEnvironment();
@@ -99,6 +99,8 @@ public class StandaloneEnvironmentStateProvider : VM, IEnvironmentStateProvider
             EnvironmentColor = ColorEnvironmentError;
             StatusText = "Environment is invalid: " + ex.Message;
         }
+
+        EnvironmentUpdateTrigger *= -1;
     }
 
     public void SetGameType(SkyrimRelease gameType)

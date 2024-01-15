@@ -24,15 +24,14 @@ public class VM_LoadOrderMenu : VM
     {
         _environmentStateProvider = environmentStateProvider;
         _snapshotFactory = snapshotFactory;
+        _loadOrderEntryFactory = loadOrderEntryFactory;
         SettingsVM = settingsVM;
 
-        if (_environmentStateProvider.LoadOrder != null)
-        {
-            foreach (var entry in _environmentStateProvider.LoadOrder)
+        UpdateLoadOrder();
+        this.WhenAnyValue(x => x._environmentStateProvider.EnvironmentUpdateTrigger).Subscribe(_ => 
             {
-                LoadOrder.Add(loadOrderEntryFactory(entry.Key));
-            }
-        }
+            UpdateLoadOrder();
+        }).DisposeWith(this);
 
         this.WhenAnyValue(x => x.SelectedStashDate).Subscribe(_ =>
         {
@@ -83,7 +82,19 @@ public class VM_LoadOrderMenu : VM
     public RelayCommand ApplyLoadOrderStashCommand { get; }
     public bool ToggleApplyLoadOrderStash { get; set; } = false;
     public LoadOrderStash? StashToApply { get; set; }
+    private readonly VM_ModKeyWrapper.Factory _loadOrderEntryFactory;
 
+    public void UpdateLoadOrder()
+    {
+        LoadOrder.Clear();
+        if (_environmentStateProvider.LoadOrder != null)
+        {
+            foreach (var entry in _environmentStateProvider.LoadOrder)
+            {
+                LoadOrder.Add(_loadOrderEntryFactory(entry.Key));
+            }
+        }
+    }
     public void RefreshAvailability()
     {
         foreach (var mod in LoadOrder)
@@ -271,7 +282,7 @@ public class VM_ModKeyWrapper : VM
     public void RefreshAvailability()
     {
         if (_parentMenu().SelectedStash != null && 
-            _parentMenu().SelectedStash.ModChunks != null &&
+            _parentMenu().SelectedStash?.ModChunks != null &&
             _parentMenu().SelectedStash.ModChunks.Where(x => x.Mods.Select(y => y.ModKey).Contains(ModKey)).Any())
         {
             IsManaged = true;

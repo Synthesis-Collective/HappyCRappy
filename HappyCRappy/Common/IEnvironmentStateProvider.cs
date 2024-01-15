@@ -22,4 +22,5 @@ public interface IEnvironmentStateProvider
     public string? CreationClubListingsFilePath { get; }
     public string? LoadOrderFilePath { get; }
     public bool EnvironmentCreated { get; set; }
+    public int EnvironmentUpdateTrigger { get; set; }
 }
