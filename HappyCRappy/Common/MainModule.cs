@@ -35,6 +35,7 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<SerializationSwitcher>().AsSelf().SingleInstance();
         builder.RegisterType<LinkCacheWarmer>().AsSelf().SingleInstance();
         builder.RegisterType<RecordUtils>().AsSelf().SingleInstance();
+        builder.RegisterType<LoadOrderStashRestorer>().AsSelf().SingleInstance();
 
         builder.RegisterType<ModRecordListing>().AsSelf();
     }

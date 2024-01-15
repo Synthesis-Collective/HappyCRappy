@@ -110,6 +110,13 @@ public class VM_LoadOrderMenu : VM
             return;
         }
 
+        var warnings = new List<string>();
+        if (!ValidateStash(warnings))
+        {
+            MessageBox.Show(string.Join(Environment.NewLine, warnings));
+            return;
+        }
+
         var now = DateTime.Now;
         string dateStr = VM_ModDisplay.ToLabelString(now);
         string dirPath = Path.Combine(SettingsVM.LoadOrderStashPath, dateStr);
@@ -170,9 +177,58 @@ public class VM_LoadOrderMenu : VM
             return;
         }
 
+        var warnings = new List<string>();
+        if(!ValidateStash(warnings))
+        {
+            MessageBox.Show(string.Join(Environment.NewLine, warnings));
+            return;
+        }
+
         ToggleApplyLoadOrderStash = true;
         StashToApply = SelectedStash.DumpToModel();
         MessageBox.Show("The currently display load order adjustments will be applied when this application is closed");
+    }
+
+    private bool ValidateStash(List<string> warnings)
+    {
+        if (_environmentStateProvider.LoadOrder == null)
+        {
+            warnings.Add("Error: load order not initialized");
+            return false;
+        }
+
+        if (SelectedStash == null)
+        {
+            warnings.Add("No load order stash selected");
+            return false;
+        }
+
+        foreach (var block in SelectedStash.ModChunks)
+        {
+            if (block.PlaceBefore != null && !_environmentStateProvider.LoadOrder.Where(x => x.Key.Equals(block.PlaceBefore.ModKey)).Any())
+            {
+                warnings.Add("Error: could not find " + block.PlaceBefore.ModKey.FileName + " in load order");
+                continue;
+            }
+
+            if (block.PlaceAfter != null && !_environmentStateProvider.LoadOrder.Where(x => x.Key.Equals(block.PlaceAfter.ModKey)).Any())
+            {
+                warnings.Add("Error: could not find " + block.PlaceAfter.ModKey.FileName + " in load order");
+                continue;
+            }
+
+            if (block.PlaceAfter != null && block.PlaceBefore != null)
+            {
+                var priorIndex = _environmentStateProvider.LoadOrder.IndexOf(block.PlaceAfter.ModKey);
+                var subsequentIndex = _environmentStateProvider.LoadOrder.IndexOf(block.PlaceBefore.ModKey);
+                if (priorIndex > subsequentIndex)
+                {
+                    warnings.Add("Error: cannot place block after " + block.PlaceAfter.ModKey.FileName + " and before " + block.PlaceBefore.ModKey.FileName + " because " + block.PlaceAfter.ModKey.FileName + " is lower than " + block.PlaceBefore.ModKey.FileName + " in your current load order");
+                }
+            }
+        }
+
+        return !warnings.Any();
     }
 
     private void RefreshAvailableStashDates()

@@ -12,7 +12,7 @@ namespace HappyCRappy;
 public class VM_MainWindow : VM
 {
     private readonly VM_IO _vmIO;
-    public VM_MainWindow(VM_SettingsMenu settingsVM, VM_IO vmIO, VM_SnapshotMenu snapShotVM, VM_LoadOrderMenu loadOrderVM)
+    public VM_MainWindow(VM_SettingsMenu settingsVM, VM_IO vmIO, VM_SnapshotMenu snapShotVM, VM_LoadOrderMenu loadOrderVM, LoadOrderStashRestorer loadOrderRestorer)
     {
         _vmIO = vmIO;
         _vmIO.CopyInViewModels();
@@ -21,6 +21,8 @@ public class VM_MainWindow : VM
         _snapShotVM = snapShotVM;
         _loadOrderVM = loadOrderVM;
         _loadOrderVM.Initialize();
+
+        _loadOrderRestorer = loadOrderRestorer;
 
         DisplayedVM = snapShotVM;
 
@@ -60,10 +62,16 @@ public class VM_MainWindow : VM
     private readonly VM_SettingsMenu _settingsVM;
     private readonly VM_SnapshotMenu _snapShotVM;
     private readonly VM_LoadOrderMenu _loadOrderVM;
+    private readonly LoadOrderStashRestorer _loadOrderRestorer;
 
 
     private void OnApplicationExit(object sender, ExitEventArgs e)
     {
         _vmIO.DumpViewModels();
+
+        if(_loadOrderVM.ToggleApplyLoadOrderStash && _loadOrderVM.StashToApply != null)
+        {
+            _loadOrderRestorer.ApplyStash(_loadOrderVM.StashToApply, _loadOrderVM.LoadOrder.Select(x => x.ModKey).ToList());
+        }
     }
 }

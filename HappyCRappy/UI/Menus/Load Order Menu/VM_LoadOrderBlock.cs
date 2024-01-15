@@ -27,6 +27,8 @@ public class VM_LoadOrderBlock : VM, IDropTarget
             RefreshPrePostMods();
             }).DisposeWith(this);
 
+        RefreshPrePostMods();
+
         RemoveSelectedMod = new RelayCommand(
             canExecute: _ => true,
             execute: x =>
@@ -65,6 +67,13 @@ public class VM_LoadOrderBlock : VM, IDropTarget
 
     public void RefreshPrePostMods()
     {
+        List<VM_ModKeyWrapper> nonContainedMods = new(_parentMenu.LoadOrder);
+        nonContainedMods.RemoveWhere(loadOrderMod => Mods.Where(blockMod => blockMod.ModKey.Equals(loadOrderMod.ModKey)).Any());
+
+        AvailablePriorMods = new(nonContainedMods);
+        AvailableSubsequentMods = new(nonContainedMods);
+        // this algorithm for sorting mods before and after the current Block's mods works, but it unnecessarily restricts the user's ability to change prior/subsequent mods when restoring a load order. Keeping commented for reuse
+        /*
         List<int> indices = new();
         foreach (var mod in Mods)
         {
@@ -133,16 +142,17 @@ public class VM_LoadOrderBlock : VM, IDropTarget
                 }
             }
 
-            if (AvailablePriorMods.Any())
+            if (AvailablePriorMods.Any() && PlaceAfter != null)
             {
                 PlaceAfter = AvailablePriorMods.Last();
             }
 
-            if (AvailableSubsequentMods.Any())
+            if (AvailableSubsequentMods.Any() && PlaceBefore != null)
             {
                 PlaceBefore = AvailableSubsequentMods.First();
             }
         }
+        */
     }
 
     public void DeleteIfNecessary()

@@ -41,11 +41,48 @@ public class VM_LoadOrderStash : VM
 
     public void CopyInFromModel(LoadOrderStash model)
     {
+        List<string> warnings = new();
+
         ModChunks.Clear();
         foreach (var chunk in model.ModChunks)
         {
             var chunkVM = _blockFactory(this);
             chunkVM.Mods.AddRange(chunk.Mods.Select(x => _modWrapperFactory(x)));
+
+            if (chunk.PlaceBefore != null)
+            {
+                var placeBefore = _parentMenu.LoadOrder.Where(x => x.ModKey.Equals(chunk.PlaceBefore)).FirstOrDefault();
+                if (placeBefore == null)
+                {
+                    warnings.Add("Could not find reference mod " + chunk.PlaceBefore.Value.FileName + " in load order");
+                }
+                else
+                {
+                    if (!chunkVM.AvailableSubsequentMods.Where(x => x.ModKey.Equals(placeBefore.ModKey)).Any())
+                    {
+                        chunkVM.AvailableSubsequentMods.Insert(0, placeBefore);
+                    }
+                    chunkVM.PlaceBefore = placeBefore;
+                }
+            }
+
+            if (chunk.PlaceAfter != null)
+            {
+                var placeAfter = _parentMenu.LoadOrder.Where(x => x.ModKey.Equals(chunk.PlaceAfter)).FirstOrDefault();
+                if (placeAfter == null)
+                {
+                    warnings.Add("Could not find reference mod " + chunk.PlaceAfter.Value.FileName + " in load order");
+                }
+                else
+                {
+                    if (!chunkVM.AvailableSubsequentMods.Where(x => x.ModKey.Equals(placeAfter.ModKey)).Any())
+                    {
+                        chunkVM.AvailablePriorMods.Insert(0, placeAfter);
+                    }
+                    chunkVM.PlaceAfter = placeAfter;
+                }
+            }
+
             ModChunks.Add(chunkVM);
         }
         DateTaken = model.DateTaken;
