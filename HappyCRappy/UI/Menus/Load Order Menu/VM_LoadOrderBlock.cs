@@ -15,8 +15,8 @@ namespace HappyCRappy;
 
 public class VM_LoadOrderBlock : VM, IDropTarget
 {
-    public delegate VM_LoadOrderBlock Factory(VM_LoadOrderSnapshot parentSnapshot);
-    public VM_LoadOrderBlock(VM_LoadOrderSnapshot parentSnapshot, VM_LoadOrderMenu parentMenu, VM_ModKeyWrapper.Factory modWrapperFactory)
+    public delegate VM_LoadOrderBlock Factory(VM_LoadOrderStash parentSnapshot);
+    public VM_LoadOrderBlock(VM_LoadOrderStash parentSnapshot, VM_LoadOrderMenu parentMenu, VM_ModKeyWrapper.Factory modWrapperFactory)
     {
         _parentSnapshot = parentSnapshot;
         _parentMenu = parentMenu;
@@ -37,7 +37,7 @@ public class VM_LoadOrderBlock : VM, IDropTarget
         );
     }
     private readonly VM_LoadOrderMenu _parentMenu;
-    private readonly VM_LoadOrderSnapshot _parentSnapshot;
+    private readonly VM_LoadOrderStash _parentSnapshot;
     private readonly VM_ModKeyWrapper.Factory _modWrapperFactory;
     public ObservableCollection<VM_ModKeyWrapper> Mods { get; set; } = new();
     public VM_ModKeyWrapper? PlaceAfter { get; set; }

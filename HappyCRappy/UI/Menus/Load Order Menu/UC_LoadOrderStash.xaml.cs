@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,9 +18,9 @@ namespace HappyCRappy
     /// <summary>
     /// Interaction logic for UC_LoadOrderSnapshot.xaml
     /// </summary>
-    public partial class UC_LoadOrderSnapshot : UserControl
+    public partial class UC_LoadOrderStash : UserControl
     {
-        public UC_LoadOrderSnapshot()
+        public UC_LoadOrderStash()
         {
             InitializeComponent();
         }

@@ -21,7 +21,10 @@
         </Grid.RowDefinitions>
 
         <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
-            <Button Content="Save Managed Load Order" Foreground="Green" Command="{Binding SaveLoadOrderStashCommand}"  Margin="5 0 20 0"/>
+            <Button Content="Save Managed Load Order" Foreground="Green" Command="{Binding SaveLoadOrderStashCommand}" VerticalAlignment="Center"  Margin="5 0 20 0"/>
+            <TextBlock Text="Show load order from" Margin="0 0 5 0" VerticalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding AvailableStashDates}" SelectedItem="{Binding SelectedStashDate}"/>
+            <Button Content="Apply Current Load Order Stash" VerticalAlignment="Center" Margin="15 0 0 0" Foreground="Red" Command="{Binding ApplyLoadOrderStashCommand}"/>
         </WrapPanel>
         
         <local:MultiSelectionListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding LoadOrder}" SelectionMode="Extended" Background="Transparent" dd:DragDrop.IsDragSource="True" dd:DragDrop.DropHandler="{Binding}">
@@ -34,6 +37,6 @@
             </local:MultiSelectionListBox.ItemTemplate>
         </local:MultiSelectionListBox>
 
-        <local:UC_LoadOrderSnapshot Grid.Row="1" Grid.Column="2" DataContext="{Binding SelectedSnapshot}"/>
+        <local:UC_LoadOrderStash Grid.Row="1" Grid.Column="2" DataContext="{Binding SelectedStash}"/>
     </Grid>
 </UserControl>

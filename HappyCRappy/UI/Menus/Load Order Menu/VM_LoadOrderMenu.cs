@@ -20,11 +20,11 @@ namespace HappyCRappy;
 public class VM_LoadOrderMenu : VM
 {
     private readonly IEnvironmentStateProvider _environmentStateProvider;
-    public VM_LoadOrderMenu(IEnvironmentStateProvider environmentStateProvider, VM_ModKeyWrapper.Factory loadOrderEntryFactory, VM_LoadOrderSnapshot.Factory snapshotFactory, VM_SettingsMenu settingsVM)
+    public VM_LoadOrderMenu(IEnvironmentStateProvider environmentStateProvider, VM_ModKeyWrapper.Factory loadOrderEntryFactory, VM_LoadOrderStash.Factory snapshotFactory, VM_SettingsMenu settingsVM)
     {
         _environmentStateProvider = environmentStateProvider;
         _snapshotFactory = snapshotFactory;
-        _settingsVM = settingsVM;
+        SettingsVM = settingsVM;
 
         if (_environmentStateProvider.LoadOrder != null)
         {
@@ -34,7 +34,15 @@ public class VM_LoadOrderMenu : VM
             }
         }
 
-        this.WhenAnyValue(x => x.SelectedSnapshot).Subscribe(_ =>
+        this.WhenAnyValue(x => x.SelectedStashDate).Subscribe(_ =>
+        {
+            if (_initialized)
+            {
+                RestoreLoadOrderStash();
+            }
+        }).DisposeWith(this);
+
+        this.WhenAnyValue(x => x.SelectedStash).Subscribe(_ =>
         {
             if (_initialized)
             {
@@ -50,16 +58,31 @@ public class VM_LoadOrderMenu : VM
             }
         );
 
+        ApplyLoadOrderStashCommand = new RelayCommand(
+            canExecute: _ => true,
+            execute: _ =>
+            {
+                ApplyLoadOrderStash();
+            }
+        );
+
+        this.WhenAnyValue(x => x.SettingsVM.SnapshotPath).Subscribe(_ => RefreshAvailableStashDates()).DisposeWith(this);
+
         _initialized = true;
     }
 
     public ObservableCollection<VM_ModKeyWrapper> LoadOrder { get; set; } = new();
     public ObservableCollection<VM_ModKeyWrapper> SelectedMods { get; set; } = new();
-    public VM_LoadOrderSnapshot? SelectedSnapshot { get; set; }
-    private VM_LoadOrderSnapshot.Factory _snapshotFactory;
+    public VM_LoadOrderStash? SelectedStash { get; set; }
+    public ObservableCollection<string> AvailableStashDates { get; set; } = new();
+    public string? SelectedStashDate { get; set; }
+    private VM_LoadOrderStash.Factory _snapshotFactory;
     private bool _initialized = false;
-    private readonly VM_SettingsMenu _settingsVM;
+    private VM_SettingsMenu SettingsVM;
     public RelayCommand SaveLoadOrderStashCommand { get; }
+    public RelayCommand ApplyLoadOrderStashCommand { get; }
+    public bool ToggleApplyLoadOrderStash { get; set; } = false;
+    public LoadOrderStash? StashToApply { get; set; }
 
     public void RefreshAvailability()
     {
@@ -71,17 +94,17 @@ public class VM_LoadOrderMenu : VM
 
     public void Initialize()
     {
-        SelectedSnapshot = _snapshotFactory();
+        SelectedStash = _snapshotFactory();
     }
 
     private void SaveLoadOrderStash()
     {
-        if (SelectedSnapshot == null)
+        if (SelectedStash == null)
         {
             MessageBox.Show("No load order stash is selected");
             return;
         }
-        else if (!SelectedSnapshot.ModChunks.Any() || !SelectedSnapshot.ModChunks.First().Mods.Any())
+        else if (!SelectedStash.ModChunks.Any() || !SelectedStash.ModChunks.First().Mods.Any())
         {
             MessageBox.Show("No plugins are currently being managed");
             return;
@@ -89,14 +112,14 @@ public class VM_LoadOrderMenu : VM
 
         var now = DateTime.Now;
         string dateStr = VM_ModDisplay.ToLabelString(now);
-        string dirPath = Path.Combine(_settingsVM.LoadOrderStashPath, dateStr);
+        string dirPath = Path.Combine(SettingsVM.LoadOrderStashPath, dateStr);
         string filePath = Path.Combine(dirPath, "LoadOrderStash.json");
         IOFunctions.CreateDirectoryIfNeeded(dirPath, IOFunctions.PathType.Directory);
 
-        var stash = SelectedSnapshot.DumpToModel();
+        var stash = SelectedStash.DumpToModel();
         stash.DateTaken = now;
 
-        JSONhandler<LoadOrderSnapshot>.SaveJSONFile(stash, filePath, out bool success, out string exceptionStr);
+        JSONhandler<LoadOrderStash>.SaveJSONFile(stash, filePath, out bool success, out string exceptionStr);
         if(success)
         {
             MessageBox.Show("Stashed managed plugins to " + filePath);
@@ -105,6 +128,72 @@ public class VM_LoadOrderMenu : VM
         {
             MessageBox.Show(exceptionStr);
         }
+    }
+
+    private void RestoreLoadOrderStash()
+    {
+        if (SelectedStashDate == null || SelectedStashDate.IsNullOrEmpty())
+        {
+            MessageBox.Show("No load order stash was selected");
+            return;
+        }
+
+        var stashPath = Path.Combine(SettingsVM.LoadOrderStashPath, SelectedStashDate, "LoadOrderStash.json");
+        if (!File.Exists(stashPath))
+        {
+            MessageBox.Show("Error: could not find file at " + stashPath);
+            return;
+        }
+
+        var loadedStash = JSONhandler<LoadOrderStash>.LoadJSONFile(stashPath, out bool success, out string exceptionStr);
+        if (!success || loadedStash == null)
+        {
+            MessageBox.Show("Error loading stash file: " + exceptionStr);
+            return;
+        }
+
+        SelectedStash = _snapshotFactory();
+        SelectedStash.CopyInFromModel(loadedStash);
+    }
+
+    private void ApplyLoadOrderStash()
+    {
+        if (SelectedStash == null)
+        {
+            MessageBox.Show("No load order stash was selected");
+            return;
+        }
+
+        if (SelectedStash.ModChunks == null || !SelectedStash.ModChunks.Where(x => x.Mods.Any()).Any())
+        {
+            MessageBox.Show("The selected load order stash has no entries");
+            return;
+        }
+
+        ToggleApplyLoadOrderStash = true;
+        StashToApply = SelectedStash.DumpToModel();
+        MessageBox.Show("The currently display load order adjustments will be applied when this application is closed");
+    }
+
+    private void RefreshAvailableStashDates()
+    {
+        if (!Directory.Exists(SettingsVM.LoadOrderStashPath))
+        {
+            return;
+        }
+
+        List<string> currentDirNames = new();
+        foreach (var directory in Directory.GetDirectories(SettingsVM.LoadOrderStashPath))
+        {
+            string dirName = Path.GetFileName(directory);
+            currentDirNames.Add(dirName);
+            if (!AvailableStashDates.Contains(dirName))
+            {
+                AvailableStashDates.Add(dirName);
+            }
+        }
+
+        AvailableStashDates.RemoveWhere(x => !currentDirNames.Contains(x));
     }
 }
 
@@ -125,8 +214,9 @@ public class VM_ModKeyWrapper : VM
 
     public void RefreshAvailability()
     {
-        if (_parentMenu().SelectedSnapshot != null &&
-            _parentMenu().SelectedSnapshot.ModChunks.Where(x => x.Mods.Select(y => y.ModKey).Contains(ModKey)).Any())
+        if (_parentMenu().SelectedStash != null && 
+            _parentMenu().SelectedStash.ModChunks != null &&
+            _parentMenu().SelectedStash.ModChunks.Where(x => x.Mods.Select(y => y.ModKey).Contains(ModKey)).Any())
         {
             IsManaged = true;
             BorderColor = new(Colors.Gray);

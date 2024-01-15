@@ -25,7 +25,7 @@ internal class MainModule : Autofac.Module
         builder.RegisterType<VM_FormContextSnapshot>().AsSelf();
         builder.RegisterType<VM_PotentialFormConflict>().AsSelf();
         builder.RegisterType<VM_PotentialFormContextConflict>().AsSelf();
-        builder.RegisterType<VM_LoadOrderSnapshot>().AsSelf();
+        builder.RegisterType<VM_LoadOrderStash>().AsSelf();
         builder.RegisterType<VM_LoadOrderBlock>().AsSelf();
         builder.RegisterType<VM_ModKeyWrapper>().AsSelf();
 

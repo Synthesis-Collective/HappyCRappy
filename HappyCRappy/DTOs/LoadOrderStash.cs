@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HappyCRappy;
 
-public class LoadOrderSnapshot
+public class LoadOrderStash
 {
     public List<LoadOrderBlock> ModChunks { get; set; } = new();
     public DateTime DateTaken { get; set; }
