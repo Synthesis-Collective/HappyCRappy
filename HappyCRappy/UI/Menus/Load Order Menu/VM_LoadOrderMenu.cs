@@ -281,9 +281,11 @@ public class VM_ModKeyWrapper : VM
 
     public void RefreshAvailability()
     {
-        if (_parentMenu().SelectedStash != null && 
-            _parentMenu().SelectedStash?.ModChunks != null &&
-            _parentMenu().SelectedStash.ModChunks.Where(x => x.Mods.Select(y => y.ModKey).Contains(ModKey)).Any())
+        var parentMenu = _parentMenu();
+        if (parentMenu != null &&
+            parentMenu.SelectedStash != null && 
+            parentMenu.SelectedStash?.ModChunks != null &&
+            parentMenu.SelectedStash.ModChunks.Where(x => x.Mods.Select(y => y.ModKey).Contains(ModKey)).Any())
         {
             IsManaged = true;
             BorderColor = new(Colors.Gray);

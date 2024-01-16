@@ -12,5 +12,5 @@ public class LoadOrderBlock
     public List<ModKey> Mods { get; set; } = new();
     public ModKey? PlaceAfter { get; set; }
     public ModKey? PlaceBefore { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

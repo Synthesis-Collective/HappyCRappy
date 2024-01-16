@@ -33,6 +33,7 @@ public class VM_LoadOrderBlock : VM, IDropTarget
             canExecute: _ => true,
             execute: x =>
             {
+                if (x == null) { return; }
                 Mods.Remove((VM_ModKeyWrapper)x);
                 DeleteIfNecessary();
             }
@@ -67,7 +68,7 @@ public class VM_LoadOrderBlock : VM, IDropTarget
     private readonly VM_LoadOrderMenu _parentMenu;
     private readonly VM_LoadOrderStash _parentSnapshot;
     private readonly VM_ModKeyWrapper.Factory _modWrapperFactory;
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public ObservableCollection<VM_ModKeyWrapper> Mods { get; set; } = new();
     public VM_ModKeyWrapper? PlaceAfter { get; set; }
     public ObservableCollection<VM_ModKeyWrapper> AvailablePriorMods { get; set; } = new();
