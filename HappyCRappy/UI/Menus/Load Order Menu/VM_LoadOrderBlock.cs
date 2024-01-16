@@ -103,8 +103,7 @@ public class VM_LoadOrderBlock : VM, IDropTarget
 
         AvailablePriorMods = new(nonContainedMods);
         AvailableSubsequentMods = new(nonContainedMods);
-        // this algorithm for sorting mods before and after the current Block's mods works, but it unnecessarily restricts the user's ability to change prior/subsequent mods when restoring a load order. Keeping commented for reuse
-        /*
+       
         List<int> indices = new();
         foreach (var mod in Mods)
         {
@@ -139,6 +138,7 @@ public class VM_LoadOrderBlock : VM, IDropTarget
                 }
             }
 
+            /* this algorithm unnecessarily restricts the user's ability to change prior/subsequent mods when restoring a load order. Keeping commented for reuse
             for (int i = 0; i < AvailablePriorMods.Count; i++)
             {
                 if (!availableFirst.Where(x => x.ModKey.Equals(AvailablePriorMods[i].ModKey)).Any())
@@ -172,18 +172,18 @@ public class VM_LoadOrderBlock : VM, IDropTarget
                     AvailableSubsequentMods.Add(lastMod);
                 }
             }
+            */
 
-            if (AvailablePriorMods.Any() && PlaceAfter != null)
+            if (availableFirst.Any() && PlaceAfter == null)
             {
-                PlaceAfter = AvailablePriorMods.Last();
+                PlaceAfter = availableFirst.Last();
             }
 
-            if (AvailableSubsequentMods.Any() && PlaceBefore != null)
+            if (availableLast.Any() && PlaceBefore == null)
             {
-                PlaceBefore = AvailableSubsequentMods.First();
+                PlaceBefore = availableLast.First();
             }
         }
-        */
     }
 
     public void DeleteIfNecessary()
