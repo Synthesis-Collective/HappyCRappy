@@ -176,7 +176,7 @@ public class VM_LoadOrderMenu : VM
 
     private void ApplyLoadOrderStash()
     {
-        if (SelectedStash == null)
+        if (SelectedStash == null || SelectedStashDate == null || SelectedStashDate.IsNullOrEmpty())
         {
             MessageBox.Show("No load order stash was selected");
             return;
