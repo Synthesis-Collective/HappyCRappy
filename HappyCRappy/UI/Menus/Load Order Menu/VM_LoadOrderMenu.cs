@@ -65,7 +65,7 @@ public class VM_LoadOrderMenu : VM
             }
         );
 
-        this.WhenAnyValue(x => x.SettingsVM.SnapshotPath).Subscribe(_ => RefreshAvailableStashDates()).DisposeWith(this);
+        this.WhenAnyValue(x => x.SettingsVM.LoadOrderStashPath).Subscribe(_ => RefreshAvailableStashDates()).DisposeWith(this);
 
         _initialized = true;
     }
