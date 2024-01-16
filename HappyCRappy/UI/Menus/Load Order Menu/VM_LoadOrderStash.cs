@@ -47,7 +47,7 @@ public class VM_LoadOrderStash : VM
         foreach (var chunk in model.ModChunks)
         {
             var chunkVM = _blockFactory(this);
-            chunkVM.Mods.AddRange(chunk.Mods.Select(x => _modWrapperFactory(x)));
+            chunkVM.CopyInFromModel(chunk);
 
             if (chunk.PlaceBefore != null)
             {
