@@ -17,14 +17,23 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Previous Mod" VerticalAlignment="Center"/>
-        <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding AvailablePriorMods}" SelectedItem="{Binding PlaceAfter}" DisplayMemberPath="ModKey.FileName"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Section Name" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+            <TextBox Text="{Binding Name}" MinWidth="150"/>
+            <Button Content="▲" Foreground="MediumPurple" FontSize="14" Command="{Binding MoveUp}" Margin="15 0 5 0"/>
+            <Button Content="▼" Foreground="MediumPurple" FontSize="14" Command="{Binding MoveDown}" />
+        </StackPanel>
 
-        <ListBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Mods}" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}" MinHeight="100" BorderBrush="Aquamarine" BorderThickness="1">
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Previous Mod" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding AvailablePriorMods}" SelectedItem="{Binding PlaceAfter}" DisplayMemberPath="ModKey.FileName"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Mods" VerticalAlignment="Center"/>
+        <ListBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Mods}" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}" MinHeight="100" BorderBrush="Aquamarine" BorderThickness="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -35,7 +44,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Next Mod" VerticalAlignment="Center"/>
-        <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding AvailableSubsequentMods}" SelectedItem="{Binding PlaceBefore}" DisplayMemberPath="ModKey.FileName"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Next Mod" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="3" Grid.Column="2" ItemsSource="{Binding AvailableSubsequentMods}" SelectedItem="{Binding PlaceBefore}" DisplayMemberPath="ModKey.FileName"/>
     </Grid>
 </UserControl>

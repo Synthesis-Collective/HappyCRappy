@@ -37,22 +37,52 @@ public class VM_LoadOrderBlock : VM, IDropTarget
                 DeleteIfNecessary();
             }
         );
+
+        MoveUp = new RelayCommand(
+            canExecute: _ => true,
+            execute: x =>
+            {
+                var index = _parentSnapshot.ModChunks.IndexOf(this);
+                if(index > 0)
+                {
+                    _parentSnapshot.ModChunks.Remove(this);
+                    _parentSnapshot.ModChunks.Insert(index - 1, this);
+                }
+            }
+        );
+
+        MoveDown = new RelayCommand(
+            canExecute: _ => true,
+            execute: x =>
+            {
+                var index = _parentSnapshot.ModChunks.IndexOf(this);
+                if (_parentSnapshot.ModChunks.Last() != this)
+                {
+                    _parentSnapshot.ModChunks.Remove(this);
+                    _parentSnapshot.ModChunks.Insert(index + 1, this);
+                }
+            }
+        );
     }
     private readonly VM_LoadOrderMenu _parentMenu;
     private readonly VM_LoadOrderStash _parentSnapshot;
     private readonly VM_ModKeyWrapper.Factory _modWrapperFactory;
+    public string Name { get; set; }
     public ObservableCollection<VM_ModKeyWrapper> Mods { get; set; } = new();
     public VM_ModKeyWrapper? PlaceAfter { get; set; }
     public ObservableCollection<VM_ModKeyWrapper> AvailablePriorMods { get; set; } = new();
     public VM_ModKeyWrapper? PlaceBefore { get; set; }
     public ObservableCollection<VM_ModKeyWrapper> AvailableSubsequentMods { get; set; } = new();
     public RelayCommand RemoveSelectedMod { get; }
+    public RelayCommand MoveUp { get; }
+    public RelayCommand MoveDown { get; }
 
     public void CopyInFromModel(LoadOrderBlock model)
     {
         Mods = new(model.Mods.Select(x => _modWrapperFactory(x)));
         PlaceAfter = model.PlaceAfter != null ? _modWrapperFactory(model.PlaceAfter.Value) : null;
         PlaceBefore = model.PlaceBefore != null ? _modWrapperFactory(model.PlaceBefore.Value) : null;
+        Name = model.Name;
     }
 
     public LoadOrderBlock DumpToModel()
@@ -61,7 +91,8 @@ public class VM_LoadOrderBlock : VM, IDropTarget
         {
             Mods = Mods.Select(x => x.ModKey).ToList(),
             PlaceAfter = PlaceAfter?.ModKey ?? new ModKey(),
-            PlaceBefore = PlaceBefore?.ModKey ?? new ModKey()
+            PlaceBefore = PlaceBefore?.ModKey ?? new ModKey(),
+            Name = Name
         };
     }
 
